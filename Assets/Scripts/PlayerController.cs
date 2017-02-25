@@ -7,9 +7,8 @@ public class PlayerController : MonoBehaviour
 {
 	Text displayText;
 
-	PlayerCollider col;
-	PlayerTerrainCollider terrainCol;
 	RaycastCollider raycastCol;
+	PlayerTerrainCollider terrainCol;
 	Transform cam;
 
 	[SerializeField] Transform rotateMesh;
@@ -39,7 +38,6 @@ public class PlayerController : MonoBehaviour
 	public bool IsRising { get { return lastVel.y > 0; } }
 
 	public Vector3 GetVel { get { return lastVel; } }
-	public PlayerCollider GetCol { get { return col; } }
 
 	public delegate void OnFloor();
 
@@ -49,15 +47,13 @@ public class PlayerController : MonoBehaviour
 		QualitySettings.vSyncCount = 0;
 		Application.targetFrameRate = 60;
 
-		col = new PlayerCollider();
-		col.Init(transform, onFloor);
 		currJumpSpeed = jumpSpeed;
-
-		terrainCol = new PlayerTerrainCollider();
-		terrainCol.Init(transform, bottom);
 
 		raycastCol = new RaycastCollider();
 		raycastCol.Init(transform, onFloor);
+
+		terrainCol = new PlayerTerrainCollider();
+		terrainCol.Init(transform, bottom);
 
 		if (GameObject.Find("Text"))
 			displayText = GameObject.Find("Text").GetComponent<Text>();
