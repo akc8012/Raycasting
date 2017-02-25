@@ -16,16 +16,32 @@ public class RaycastCollider
 	public void CustomUpdate()
 	{
 		Vector3[] origins = new Vector3[] { GetBottomLeft, GetBottomRight, GetTopLeft, GetTopRight };
-		//Vector3[] directions = new Vector3[] { Vector3.down, Vector3.forward, Vector3.back, Vector3.left, Vector3.right };
+		Vector3[] directions = new Vector3[] { Vector3.down, Vector3.forward };
 		//int[] axisies = new int[] { 1, 2, 2, 0, 0 };
 		for (int i = 0; i < origins.Length; i++)
 		{
-			//for (int j = 0; j < directions.Length; j++)
+			for (int j = 0; j < directions.Length; j++)
 			{
+				if (j == 1 && (i == 0 || i == 1))
+					continue;
+
 				Vector3 hitPos;
-				if (ShootRay(origins[i], Vector3.down, out hitPos))
+				if (ShootRay(origins[i], directions[j], out hitPos))
 				{
-					SetPos(1, hitPos.y + GetExtents.y);
+					int axis;
+					float pos;
+
+					if (directions[j] == Vector3.down)
+						axis = 1;
+					else
+						axis = 2;
+
+					if (directions[j] == Vector3.down)
+						pos = hitPos.y + GetExtents.y;
+					else
+						pos = hitPos.z - GetExtents.z;
+
+					SetPos(axis, pos);
 					//break;
 				}
 			}
@@ -34,12 +50,15 @@ public class RaycastCollider
 
 	bool ShootRay(Vector3 origin, Vector3 direction, out Vector3 hitPos)
 	{
-		origin.y += 0.2f;		// "skin width" (when we're on the floor, make sure ray is high enough to still touch the floor)
+		if (direction == Vector3.down)
+			origin.y += 0.2f;       // "skin width" (when we're on the floor, make sure ray is high enough to still touch the floor)
+		else
+			origin.z -= 0.2f;
 
 		RaycastHit hitMan;
 		Ray rayMan = new Ray(origin, direction);
 		Debug.DrawLine(rayMan.origin, rayMan.origin + (rayMan.direction*0.3f), Color.white);
-		if (Physics.Raycast(rayMan, out hitMan, 0.3f))
+		if (Physics.Raycast(rayMan, out hitMan, 0.2f))
 		{
 			hitPos = hitMan.point;
 			return true;
