@@ -1697,7 +1697,7 @@ MonoBehaviour:
   bottom: {fileID: 4542105879101352}
   maxSpeed: 10.5
   gravity: 35
-  jumpSpeed: 10
+  jumpSpeed: 14
   doAnimations: 0
 --- !u!124 &124353200847495426
 Behaviour:

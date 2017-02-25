@@ -22,7 +22,8 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] float jumpSpeed = 10.5f;
 	[SerializeField] bool doAnimations = true;
 
-	Vector3 vel;
+	Vector3 lastVel;
+	float jumpyVel;
 	float lastSpeed = 0;
 	float acceleration = 0.2f;
 	float deceleration = 1.5f;
@@ -33,15 +34,12 @@ public class PlayerController : MonoBehaviour
 	float currJumpSpeed;
 	bool isGrounded = false;
 	public bool IsGrounded { get { return isGrounded; } }
-	public bool IsRising { get { return vel.y > 0; } }
+	public bool IsRising { get { return lastVel.y > 0; } }
 
-	public Vector3 GetVel { get { return vel; } }
+	public Vector3 GetVel { get { return lastVel; } }
 	public PlayerCollider GetCol { get { return col; } }
 
 	public delegate void OnFloor();
-
-
-	//float jumpyVel = 0;
 
 	void Awake()
 	{
@@ -74,25 +72,25 @@ public class PlayerController : MonoBehaviour
 			SlowDown(ref speed);
 
 		if (doAnimations) animator.SetFloat("Speed", speed);
-
-		float lastVelY = vel.y;
-		vel = rotateMesh.forward * speed;
+		
+		Vector3 vel = rotateMesh.forward * speed;
 		vel = Vector3.ClampMagnitude(vel, maxVel);
-		vel.y = lastVelY;
+		vel.y = lastVel.y + jumpyVel;
 
-		HandleJumpInput(Input.GetButtonDown("Jump"), Input.GetButton("Jump"), speed);
+		HandleJumpInput(Input.GetButtonDown("Jump"), Input.GetButton("Jump"), speed, ref vel);
 
-		Move();
+		Move(ref vel);
 		
 		if (!IsRising && DownRay())
 			SnapToTerrainFloor();
 
 		isGrounded = false;
 		lastSpeed = speed;
+		lastVel = vel;
 		DebugStuff(speed);
 	}
 
-	void HandleJumpInput(bool jumpButtonDown, bool jumpHeld, float speed)
+	void HandleJumpInput(bool jumpButtonDown, bool jumpHeld, float speed, ref Vector3 vel)
 	{
 		if (jumpButtonDown && IsGrounded)
 		{
@@ -109,7 +107,7 @@ public class PlayerController : MonoBehaviour
 
 			StopCoroutine("Jump");
 			currJumpSpeed = jumpSpeed;
-			//jumpyVel = 0;
+			jumpyVel = 0;
 		}
 	}
 
@@ -118,8 +116,7 @@ public class PlayerController : MonoBehaviour
 		float valueBasedOnRunningJumpSpeed = Mathf.Clamp((speedJumpedAt / maxSpeed) + 0.4f, 0.9f, 1.14f);
 		while (true)
 		{
-			//jumpyVel += currJumpSpeed * valueBasedOnRunningJumpSpeed;
-			vel.y += currJumpSpeed * valueBasedOnRunningJumpSpeed;
+			jumpyVel = jumpyVel + (currJumpSpeed * valueBasedOnRunningJumpSpeed);
 			currJumpSpeed *= jumpDetraction;
 			yield return null;
 		}
@@ -127,7 +124,7 @@ public class PlayerController : MonoBehaviour
 
 	void onFloor()
 	{
-		vel.y = 0;
+		lastVel.y = 0;
 		isGrounded = true;
 	}
 
@@ -146,7 +143,7 @@ public class PlayerController : MonoBehaviour
 		return moveDir;
 	}
 
-	void Move()
+	void Move(ref Vector3 vel)
 	{
 		vel.y -= gravity * Time.deltaTime;
 		transform.position += vel * Time.deltaTime;
@@ -211,7 +208,5 @@ public class PlayerController : MonoBehaviour
 	{
 		if (displayText)
 			displayText.text = speed + "";
-
-		print(IsRising);
 	}
 }
