@@ -7,6 +7,10 @@ public class RaycastCollider
 	Transform transform;
 	PlayerController.OnFloor onFloor;
 
+	Vector3[] origins;
+	Vector3[] directions;
+	int[,] originsForDirs;
+
 	float skinLength = 0.2f;
 	float rayLength = 0.2f;
 
@@ -15,31 +19,26 @@ public class RaycastCollider
 		this.transform = transform;
 		this.onFloor = onFloor;
 
-
-
-		Debug.Log(Vector3.down);
-		Debug.Log(Vector3.forward);
+		directions = new Vector3[] { Vector3.down, Vector3.forward, Vector3.back, Vector3.left, Vector3.right };
+		originsForDirs = new int[,] { { 0, 1, 2, 3 }, { 2, 3, -1, -1 }, { 0, 1, -1, -1 },
+									  { 0, 2, -1, -1 }, { 1, 3, -1, -1 } };
 	}
 
 	public void CustomUpdate()
 	{
-		Vector3[] origins = new Vector3[] { GetBottomLeft, GetBottomRight, GetTopLeft, GetTopRight };
-		Vector3[] directions = new Vector3[] { Vector3.down, Vector3.forward };
+		origins = new Vector3[] { GetBottomLeft, GetBottomRight, GetTopLeft, GetTopRight };
 
-		//int[] originsForDirs = new int[] { 1, 2 };
-
-		for (int i = 0; i < origins.Length; i++)
+		for (int i = 0; i < directions.Length; i++)
 		{
-			for (int j = 0; j < directions.Length; j++)
+			for (int j = 0; j < origins.Length; j++)
 			{
-				if (j == 1 && (i == 0 || i == 1))
-					continue;
+				if (originsForDirs[i, j] == -1) continue;
 
 				Vector3 hitPos;
-				if (ShootRay(origins[i], directions[j], out hitPos))
+				if (ShootRay(origins[originsForDirs[i,j]], directions[i], out hitPos))
 				{
-					int axis = GetAxisOfDirection(directions[j]);
-					float pos = hitPos[axis] - (directions[j][axis] * GetExtents[axis]);
+					int axis = GetAxisOfDirection(directions[i]);
+					float pos = hitPos[axis] - (directions[i][axis] * GetExtents[axis]);
 
 					SetPos(axis, pos);
 				}
