@@ -9,7 +9,9 @@ public class PlayerController : MonoBehaviour
 
 	PlayerCollider col;
 	PlayerTerrainCollider terrainCol;
+	RaycastCollider raycastCol;
 	Transform cam;
+
 	[SerializeField] Transform rotateMesh;
 	[SerializeField] Animator animator;
 	[SerializeField] Transform bottom;
@@ -54,6 +56,9 @@ public class PlayerController : MonoBehaviour
 		terrainCol = new PlayerTerrainCollider();
 		terrainCol.Init(transform, bottom);
 
+		raycastCol = new RaycastCollider();
+		raycastCol.Init(transform, onFloor);
+
 		if (GameObject.Find("Text"))
 			displayText = GameObject.Find("Text").GetComponent<Text>();
 	}
@@ -81,13 +86,18 @@ public class PlayerController : MonoBehaviour
 
 		Move(ref vel);
 		
-		if (!IsRising && DownRay())
-			SnapToTerrainFloor();
+		//if (!IsRising && DownRay())
+		//	SnapToTerrainFloor();
 
 		isGrounded = false;
 		lastSpeed = speed;
 		lastVel = vel;
 		DebugStuff(speed);
+	}
+
+	void LateUpdate()
+	{
+		raycastCol.CustomUpdate();
 	}
 
 	Vector3 GetMoveDirection(ref float speed)

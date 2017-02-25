@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerCollider
+public class RaycastCollider
 {
 	Transform transform;
 	PlayerController.OnFloor onFloor;
@@ -13,7 +13,43 @@ public class PlayerCollider
 		this.onFloor = onFloor;
 	}
 
-	public void SetPos(int axis, float pos)
+	public void CustomUpdate()
+	{
+		Vector3[] origins = new Vector3[] { GetBottomLeft, GetBottomRight, GetTopLeft, GetTopRight };
+		//Vector3[] directions = new Vector3[] { Vector3.down, Vector3.forward, Vector3.back, Vector3.left, Vector3.right };
+		//int[] axisies = new int[] { 1, 2, 2, 0, 0 };
+		for (int i = 0; i < origins.Length; i++)
+		{
+			//for (int j = 0; j < directions.Length; j++)
+			{
+				Vector3 hitPos;
+				if (ShootRay(origins[i], Vector3.down, out hitPos))
+				{
+					SetPos(1, hitPos.y + GetExtents.y);
+					//break;
+				}
+			}
+		}
+	}
+
+	bool ShootRay(Vector3 origin, Vector3 direction, out Vector3 hitPos)
+	{
+		origin.y += 0.2f;		// "skin width" (when we're on the floor, make sure ray is high enough to still touch the floor)
+
+		RaycastHit hitMan;
+		Ray rayMan = new Ray(origin, direction);
+		Debug.DrawLine(rayMan.origin, rayMan.origin + (rayMan.direction*0.3f), Color.white);
+		if (Physics.Raycast(rayMan, out hitMan, 0.3f))
+		{
+			hitPos = hitMan.point;
+			return true;
+		}
+
+		hitPos = Vector3.zero;
+		return false;
+	}
+
+	void SetPos(int axis, float pos)
 	{
 		if (axis == 1) onFloor();
 
