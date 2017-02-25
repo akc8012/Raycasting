@@ -16,8 +16,8 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] Animator animator;
 	[SerializeField] Transform bottom;
 
-	[SerializeField] float maxSpeed = 10;		// what to increment velocity by
-	float maxVel = 5;			// maximum velocity in any direction
+	[SerializeField] float maxSpeed = 10;       // what to increment velocity by
+	float maxFallSpeed = 30;
 	float rotSmooth = 20;		// smoothing on the lerp to rotate towards stick direction
 	float rotSmoothSlow = 5;       // smoothing on the lerp to rotate towards stick direction
 	[SerializeField] float gravity = 35;
@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour
 	float jumpyVel;
 	float lastSpeed = 0;
 	float acceleration = 0.2f;
-	float deceleration = 1.5f;
+	float deceleration = 0.75f;
 	float speedJumpedAt;
 
 	const float jumpDetraction = 0.25f;
@@ -79,7 +79,6 @@ public class PlayerController : MonoBehaviour
 		if (doAnimations) animator.SetFloat("Speed", speed);
 		
 		Vector3 vel = rotateMesh.forward * speed;
-		vel = Vector3.ClampMagnitude(vel, maxVel);
 		vel.y = lastVel.y + jumpyVel;
 
 		HandleJumpInput(Input.GetButtonDown("Jump"), Input.GetButton("Jump"), speed, ref vel);
@@ -97,7 +96,7 @@ public class PlayerController : MonoBehaviour
 
 	void LateUpdate()
 	{
-		raycastCol.CustomUpdate();
+		raycastCol.CustomUpdate(lastVel.y);
 	}
 
 	Vector3 GetMoveDirection(ref float speed)
@@ -171,6 +170,7 @@ public class PlayerController : MonoBehaviour
 	void Move(ref Vector3 vel)
 	{
 		vel.y -= gravity * Time.deltaTime;
+		vel.y = Mathf.Clamp(vel.y, -maxFallSpeed, float.MaxValue);
 		transform.position += vel * Time.deltaTime;
 	}
 

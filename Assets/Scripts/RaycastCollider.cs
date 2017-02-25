@@ -13,6 +13,7 @@ public class RaycastCollider
 
 	float skinLength = 0.2f;
 	float rayLength = 0.2f;
+	float downRayVelMod = 0.02f;
 
 	public void Init(Transform transform, PlayerController.OnFloor onFloor)
 	{
@@ -24,7 +25,7 @@ public class RaycastCollider
 									  { 0, 2, -1, -1 }, { 1, 3, -1, -1 } };
 	}
 
-	public void CustomUpdate()
+	public void CustomUpdate(float playerDownVel)
 	{
 		origins = new Vector3[] { GetBottomLeft, GetBottomRight, GetTopLeft, GetTopRight };
 
@@ -35,7 +36,8 @@ public class RaycastCollider
 				if (originsForDirs[i, j] == -1) continue;
 
 				Vector3 hitPos;
-				if (ShootRay(origins[originsForDirs[i,j]], directions[i], out hitPos))
+				float mod = DownRayMod(playerDownVel, i);
+				if (ShootRay(origins[originsForDirs[i,j]], directions[i], out hitPos, mod))
 				{
 					int axis = GetAxisOfDirection(directions[i]);
 					float pos = hitPos[axis] - (directions[i][axis] * GetExtents[axis]);
@@ -46,14 +48,15 @@ public class RaycastCollider
 		}
 	}
 
-	bool ShootRay(Vector3 origin, Vector3 direction, out Vector3 hitPos)
+	bool ShootRay(Vector3 origin, Vector3 direction, out Vector3 hitPos, float newLength)
 	{
 		origin -= direction * skinLength;     // when we're on the floor, make sure ray is high enough to still touch the floor
+		float length = newLength == -1 ? rayLength : newLength;
 
 		RaycastHit hitMan;
 		Ray rayMan = new Ray(origin, direction);
-		Debug.DrawLine(rayMan.origin, rayMan.origin + (rayMan.direction*0.3f), Color.white);
-		if (Physics.Raycast(rayMan, out hitMan, rayLength))
+		Debug.DrawLine(rayMan.origin, rayMan.origin + (rayMan.direction*length), Color.white);
+		if (Physics.Raycast(rayMan, out hitMan, length))
 		{
 			hitPos = hitMan.point;
 			return true;
@@ -79,6 +82,17 @@ public class RaycastCollider
 			if (direction[i] != 0)
 				return i;
 		}
+		return -1;
+	}
+
+	float DownRayMod(float playerDownVel, int i)
+	{
+		if (i == 0)
+		{
+			playerDownVel = -playerDownVel * downRayVelMod;
+			return Mathf.Clamp(playerDownVel, rayLength, float.MaxValue);
+		}
+
 		return -1;
 	}
 
