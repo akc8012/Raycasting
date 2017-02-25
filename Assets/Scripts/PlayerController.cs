@@ -90,6 +90,53 @@ public class PlayerController : MonoBehaviour
 		DebugStuff(speed);
 	}
 
+	Vector3 GetMoveDirection(ref float speed)
+	{
+		Vector3 stickDir = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+		speed = Mathf.Clamp(Vector3.Magnitude(stickDir), 0, 1);
+
+		Vector3 cameraDir = cam.forward; cameraDir.y = 0.0f;
+		Vector3 moveDir = Quaternion.FromToRotation(Vector3.forward, cameraDir) * stickDir;     // referential shift
+
+		// fixes bug when the camera forward is exactly -forward (opposite to Vector3.forward) by flipping the x around
+		if (Vector3.Dot(Vector3.forward, cameraDir.normalized) == -1)
+			moveDir = new Vector3(-moveDir.x, moveDir.y, moveDir.z);
+
+		return moveDir;
+	}
+
+	void RotateMesh(Vector3 moveDir)
+	{
+		float angle = Vector3.Angle(moveDir, rotateMesh.forward);
+
+		//if (angle > 15 && angle != 90)
+		//	return;
+
+		if (angle > 135)        // if we're a very big angle change, we'll want to snap right to it, instead of lerping
+			rotateMesh.forward = moveDir;
+		else
+		{
+			Vector3 targetRotation = Vector3.Lerp(rotateMesh.forward, moveDir,
+				Time.deltaTime * (IsGrounded ? rotSmooth : rotSmoothSlow));
+			if (targetRotation != Vector3.zero)
+				rotateMesh.rotation = Quaternion.LookRotation(targetRotation);
+		}
+	}
+
+	void SpeedUp(ref float speed)
+	{
+		float speedClamp = speed;
+		float airClamp = (IsGrounded ? 1 : (speedJumpedAt / maxSpeed) + 0.2f);
+		speed = lastSpeed + acceleration;
+		speed = Mathf.Clamp(speed, 0, maxSpeed * speedClamp * airClamp);
+	}
+
+	void SlowDown(ref float speed)
+	{
+		speed = lastSpeed - deceleration;
+		speed = Mathf.Clamp(speed, 0, maxSpeed);
+	}
+
 	void HandleJumpInput(bool jumpButtonDown, bool jumpHeld, float speed, ref Vector3 vel)
 	{
 		if (jumpButtonDown && IsGrounded)
@@ -111,74 +158,10 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	IEnumerator Jump()
-	{
-		float valueBasedOnRunningJumpSpeed = Mathf.Clamp((speedJumpedAt / maxSpeed) + 0.4f, 0.9f, 1.14f);
-		while (true)
-		{
-			jumpyVel = jumpyVel + (currJumpSpeed * valueBasedOnRunningJumpSpeed);
-			currJumpSpeed *= jumpDetraction;
-			yield return null;
-		}
-	}
-
-	void onFloor()
-	{
-		lastVel.y = 0;
-		isGrounded = true;
-	}
-
-	Vector3 GetMoveDirection(ref float speed)
-	{
-		Vector3 stickDir = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-		speed = Mathf.Clamp(Vector3.Magnitude(stickDir), 0, 1);
-
-		Vector3 cameraDir = cam.forward; cameraDir.y = 0.0f;
-		Vector3 moveDir = Quaternion.FromToRotation(Vector3.forward, cameraDir) * stickDir;		// referential shift
-
-		// fixes bug when the camera forward is exactly -forward (opposite to Vector3.forward) by flipping the x around
-		if (Vector3.Dot(Vector3.forward, cameraDir.normalized) == -1)
-			moveDir = new Vector3(-moveDir.x, moveDir.y, moveDir.z);
-
-		return moveDir;
-	}
-
 	void Move(ref Vector3 vel)
 	{
 		vel.y -= gravity * Time.deltaTime;
 		transform.position += vel * Time.deltaTime;
-	}
-
-	void SpeedUp(ref float speed)
-	{
-		float speedClamp = speed;
-		float airClamp = (IsGrounded ? 1 : (speedJumpedAt / maxSpeed) + 0.2f);
-		speed = lastSpeed + acceleration;
-		speed = Mathf.Clamp(speed, 0, maxSpeed * speedClamp * airClamp);
-	}
-
-	void SlowDown(ref float speed)
-	{
-		speed = lastSpeed - deceleration;
-		speed = Mathf.Clamp(speed, 0, maxSpeed);
-	}
-
-	void RotateMesh(Vector3 moveDir)
-	{
-		float angle = Vector3.Angle(moveDir, rotateMesh.forward);
-
-		//if (angle > 15 && angle != 90)
-		//	return;
-
-		if (angle > 135)        // if we're a very big angle change, we'll want to snap right to it, instead of lerping
-			rotateMesh.forward = moveDir;
-		else
-		{
-			Vector3 targetRotation = Vector3.Lerp(rotateMesh.forward, moveDir,
-				Time.deltaTime * (IsGrounded ? rotSmooth : rotSmoothSlow));
-			if (targetRotation != Vector3.zero)
-				rotateMesh.rotation = Quaternion.LookRotation(targetRotation);
-		}
 	}
 
 	bool DownRay()
@@ -202,6 +185,24 @@ public class PlayerController : MonoBehaviour
 	{
 		terrainCol.CustomUpdate();
 		onFloor();
+	}
+
+
+	IEnumerator Jump()
+	{
+		float valueBasedOnRunningJumpSpeed = Mathf.Clamp((speedJumpedAt / maxSpeed) + 0.4f, 0.9f, 1.14f);
+		while (true)
+		{
+			jumpyVel = jumpyVel + (currJumpSpeed * valueBasedOnRunningJumpSpeed);
+			currJumpSpeed *= jumpDetraction;
+			yield return null;
+		}
+	}
+
+	void onFloor()
+	{
+		lastVel.y = 0;
+		isGrounded = true;
 	}
 
 	void DebugStuff(float speed)
