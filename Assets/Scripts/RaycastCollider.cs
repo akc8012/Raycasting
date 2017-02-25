@@ -7,17 +7,27 @@ public class RaycastCollider
 	Transform transform;
 	PlayerController.OnFloor onFloor;
 
+	float skinLength = 0.2f;
+	float rayLength = 0.2f;
+
 	public void Init(Transform transform, PlayerController.OnFloor onFloor)
 	{
 		this.transform = transform;
 		this.onFloor = onFloor;
+
+
+
+		Debug.Log(Vector3.down);
+		Debug.Log(Vector3.forward);
 	}
 
 	public void CustomUpdate()
 	{
 		Vector3[] origins = new Vector3[] { GetBottomLeft, GetBottomRight, GetTopLeft, GetTopRight };
 		Vector3[] directions = new Vector3[] { Vector3.down, Vector3.forward };
-		//int[] axisies = new int[] { 1, 2, 2, 0, 0 };
+
+		//int[] originsForDirs = new int[] { 1, 2 };
+
 		for (int i = 0; i < origins.Length; i++)
 		{
 			for (int j = 0; j < directions.Length; j++)
@@ -28,21 +38,10 @@ public class RaycastCollider
 				Vector3 hitPos;
 				if (ShootRay(origins[i], directions[j], out hitPos))
 				{
-					int axis;
-					float pos;
-
-					if (directions[j] == Vector3.down)
-						axis = 1;
-					else
-						axis = 2;
-
-					if (directions[j] == Vector3.down)
-						pos = hitPos.y + GetExtents.y;
-					else
-						pos = hitPos.z - GetExtents.z;
+					int axis = GetAxisOfDirection(directions[j]);
+					float pos = hitPos[axis] - (directions[j][axis] * GetExtents[axis]);
 
 					SetPos(axis, pos);
-					//break;
 				}
 			}
 		}
@@ -50,15 +49,12 @@ public class RaycastCollider
 
 	bool ShootRay(Vector3 origin, Vector3 direction, out Vector3 hitPos)
 	{
-		if (direction == Vector3.down)
-			origin.y += 0.2f;       // "skin width" (when we're on the floor, make sure ray is high enough to still touch the floor)
-		else
-			origin.z -= 0.2f;
+		origin -= direction * skinLength;     // when we're on the floor, make sure ray is high enough to still touch the floor
 
 		RaycastHit hitMan;
 		Ray rayMan = new Ray(origin, direction);
 		Debug.DrawLine(rayMan.origin, rayMan.origin + (rayMan.direction*0.3f), Color.white);
-		if (Physics.Raycast(rayMan, out hitMan, 0.2f))
+		if (Physics.Raycast(rayMan, out hitMan, rayLength))
 		{
 			hitPos = hitMan.point;
 			return true;
@@ -75,6 +71,16 @@ public class RaycastCollider
 		Vector3 newPos = transform.position;
 		newPos[axis] = pos;
 		transform.position = newPos;
+	}
+
+	int GetAxisOfDirection(Vector3 direction)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			if (direction[i] != 0)
+				return i;
+		}
+		return -1;
 	}
 
 	public Vector3 GetExtents { get { return transform.lossyScale / 2; } }
