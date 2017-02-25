@@ -187,7 +187,7 @@ GameObject:
   - component: {fileID: 4902269725415566}
   - component: {fileID: 33131867069472430}
   - component: {fileID: 23307897856433332}
-  - component: {fileID: 114389810423968292}
+  - component: {fileID: 114180025864952824}
   m_Layer: 0
   m_Name: OrigPlayer
   m_TagString: Player
@@ -1663,6 +1663,24 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114180025864952824
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1230884051307996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dda92f338e3173f4da63106eb727c7b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotateMesh: {fileID: 4768151676531038}
+  animator: {fileID: 95487712220293180}
+  bottom: {fileID: 4542105879101352}
+  maxSpeed: 10.5
+  gravity: 35
+  jumpSpeed: 10.5
+  doAnimations: 0
 --- !u!114 &114338191855344310
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1681,24 +1699,6 @@ MonoBehaviour:
   camMinDistanceFromCharacter: {x: 1, y: -0.5}
   invertX: 0
   invertY: 0
---- !u!114 &114389810423968292
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1230884051307996}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2d97cd6852290c47ab3ddbff2bcd79d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rotateMesh: {fileID: 4768151676531038}
-  animator: {fileID: 95487712220293180}
-  bottom: {fileID: 4542105879101352}
-  maxSpeed: 10.5
-  gravity: 35
-  jumpSpeed: 14
-  doAnimations: 0
 --- !u!124 &124353200847495426
 Behaviour:
   m_ObjectHideFlags: 1

@@ -35,7 +35,7 @@ public class WallCollider : MonoBehaviour
 
 	void Start()
 	{
-		player = GameObject.FindWithTag("Player").GetComponent<PlayerController>().GetCol;
+		player = GameObject.FindWithTag("Player").GetComponent<OrigPlayerController>().GetCol;
 	}
 
 	bool InFront
@@ -105,7 +105,7 @@ public class WallCollider : MonoBehaviour
 
 	public void CustomLateUpdate()
 	{
-		float velY = GameObject.FindWithTag("Player").GetComponent<PlayerController>().GetVel.y;
+		float velY = GameObject.FindWithTag("Player").GetComponent<OrigPlayerController>().GetVel.y;
 		velY = -velY * 0.1f;
 		snapLeniency = Mathf.Clamp(velY, 0.2f, float.MaxValue);
 
