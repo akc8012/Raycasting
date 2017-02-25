@@ -162,19 +162,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   distanceAway: 5
-  distanceAwayMultiplier: 1.5
   distanceUp: 2
-  distanceUpMultiplier: 5
-  distanceSide: 0
-  smooth: 3
-  lookDirDampTime: 0.1
-  camSmoothDampTime: 0.1
-  freeThreshhold: -0.1
-  rightStickThreshhold: 0.1
-  freeRotationDegreePerSecond: -5
   playerObj: {fileID: 0}
   parentRig: {fileID: 1999015525442226}
   camMinDistanceFromCharacter: {x: 1, y: -0.5}
+  invertX: 0
+  invertY: 0
 --- !u!124 &124468976792563844
 Behaviour:
   m_ObjectHideFlags: 1

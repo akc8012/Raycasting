@@ -14,7 +14,6 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] Animator animator;
 	[SerializeField] Transform bottom;
 
-	Vector3 vel = Vector3.zero;
 	[SerializeField] float maxSpeed = 10;		// what to increment velocity by
 	float maxVel = 5;			// maximum velocity in any direction
 	float rotSmooth = 20;		// smoothing on the lerp to rotate towards stick direction
@@ -23,6 +22,7 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] float jumpSpeed = 10.5f;
 	[SerializeField] bool doAnimations = true;
 
+	Vector3 vel;
 	float lastSpeed = 0;
 	float acceleration = 0.2f;
 	float deceleration = 1.5f;
@@ -34,10 +34,14 @@ public class PlayerController : MonoBehaviour
 	bool isGrounded = false;
 	public bool IsGrounded { get { return isGrounded; } }
 	public bool IsRising { get { return vel.y > 0; } }
-	bool collisionActive = true;
-	public bool CollisionActive { get { return collisionActive; } }
+
+	public Vector3 GetVel { get { return vel; } }
+	public PlayerCollider GetCol { get { return col; } }
 
 	public delegate void OnFloor();
+
+
+	//float jumpyVel = 0;
 
 	void Awake()
 	{
@@ -56,30 +60,19 @@ public class PlayerController : MonoBehaviour
 			displayText = GameObject.Find("Text").GetComponent<Text>();
 	}
 
-	void Start()
-	{
-		DownRay();
-	}
-
 	void Update()
 	{
-		if (Time.deltaTime > 0.1f)
-		{
-			//print("player skip this frame");
-			return;
-		}
-
-		if (!CollisionActive) return;
+		if (Time.deltaTime > 0.1f) return;
 
 		float speed = 0;
 		Vector3 moveDir = GetMoveDirection(ref speed);
-		
+		RotateMesh(moveDir);
+
 		if (speed > 0.19f)		// greater than deadzone
 			SpeedUp(ref speed);
 		else
 			SlowDown(ref speed);
 
-		RotateMesh(moveDir);
 		if (doAnimations) animator.SetFloat("Speed", speed);
 
 		float lastVelY = vel.y;
@@ -87,32 +80,37 @@ public class PlayerController : MonoBehaviour
 		vel = Vector3.ClampMagnitude(vel, maxVel);
 		vel.y = lastVelY;
 
-		if (Input.GetButtonDown("Jump") && IsGrounded)
+		HandleJumpInput(Input.GetButtonDown("Jump"), Input.GetButton("Jump"), speed);
+
+		Move();
+		
+		if (!IsRising && DownRay())
+			SnapToTerrainFloor();
+
+		isGrounded = false;
+		lastSpeed = speed;
+		DebugStuff(speed);
+	}
+
+	void HandleJumpInput(bool jumpButtonDown, bool jumpHeld, float speed)
+	{
+		if (jumpButtonDown && IsGrounded)
 		{
 			if (doAnimations) animator.SetTrigger("Jump");
 			speedJumpedAt = speed;
 			StartCoroutine("Jump");
+			return;
 		}
 
-		if ((!Input.GetButton("Jump") && !isGrounded) || !IsRising)
+		if ((!jumpHeld && !isGrounded) || !IsRising)
 		{
 			if (IsRising)      // set vel to fall down faster
 				vel.y *= fallDownFast;
 
 			StopCoroutine("Jump");
 			currJumpSpeed = jumpSpeed;
+			//jumpyVel = 0;
 		}
-
-		vel.y -= gravity * Time.deltaTime;
-		transform.position += vel * Time.deltaTime;
-		isGrounded = false;
-		lastSpeed = speed;
-
-		if (!IsRising && DownRay())
-			SnapToTerrainFloor();
-
-		if (displayText)
-			displayText.text = speed+"";
 	}
 
 	IEnumerator Jump()
@@ -120,6 +118,7 @@ public class PlayerController : MonoBehaviour
 		float valueBasedOnRunningJumpSpeed = Mathf.Clamp((speedJumpedAt / maxSpeed) + 0.4f, 0.9f, 1.14f);
 		while (true)
 		{
+			//jumpyVel += currJumpSpeed * valueBasedOnRunningJumpSpeed;
 			vel.y += currJumpSpeed * valueBasedOnRunningJumpSpeed;
 			currJumpSpeed *= jumpDetraction;
 			yield return null;
@@ -145,6 +144,12 @@ public class PlayerController : MonoBehaviour
 			moveDir = new Vector3(-moveDir.x, moveDir.y, moveDir.z);
 
 		return moveDir;
+	}
+
+	void Move()
+	{
+		vel.y -= gravity * Time.deltaTime;
+		transform.position += vel * Time.deltaTime;
 	}
 
 	void SpeedUp(ref float speed)
@@ -179,9 +184,6 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	public Vector3 GetVel { get { return vel; } }
-	public PlayerCollider GetCol { get { return col; } }
-
 	bool DownRay()
 	{
 		RaycastHit hitMan;
@@ -205,18 +207,11 @@ public class PlayerController : MonoBehaviour
 		onFloor();
 	}
 
-	void OnEnable()
+	void DebugStuff(float speed)
 	{
-		
-	}
+		if (displayText)
+			displayText.text = speed + "";
 
-	void OnDisable()
-	{
-		vel = Vector3.zero;
-	}
-
-	public void SetVelFromBall(Vector3 ballVel)
-	{
-		vel = ballVel;
+		print(IsRising);
 	}
 }

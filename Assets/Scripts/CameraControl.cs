@@ -9,7 +9,7 @@ using UnityEngine;
 //		you'll stay there once the snap key is released
 
 
-public class Camera_Control2 : MonoBehaviour {
+public class CameraControl : MonoBehaviour {
 
 	public float
 	distanceAway,
