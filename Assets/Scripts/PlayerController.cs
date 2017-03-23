@@ -34,14 +34,12 @@ public class PlayerController : MonoBehaviour
 	const float fallDownFast = 0.90f;
 	float currJumpSpeed;
 	bool isGrounded = false;
-	bool rotating = false;
 	public bool IsGrounded { get { return isGrounded; } }
 	public bool IsRising { get { return lastVel.y > 0; } }
 
 	public Vector3 GetVel { get { return lastVel; } }
 
 	public delegate void OnFloor();
-	
 
 	void Awake()
 	{
@@ -114,37 +112,20 @@ public class PlayerController : MonoBehaviour
 
 	void RotateMesh(Vector3 moveDir)
 	{
-		if (rotating) return;
-
 		float angle = Vector3.Angle(moveDir, rotateMesh.forward);
 
-		if (angle > 135)        // big angle difference, auto rotate and stop other rotations
-		{
-			StartCoroutine(DoRotateThing(moveDir));
-		}
+		//if (angle > 15 && angle != 90)
+		//	return;
+
+		if (angle > 135)        // if we're a very big angle change, we'll want to snap right to it, instead of lerping
+			rotateMesh.forward = moveDir;
 		else
 		{
-			Vector3 targetRotation = Vector3.Lerp(rotateMesh.forward, moveDir, Time.deltaTime * (IsGrounded ? rotSmooth : rotSmoothSlow));
+			Vector3 targetRotation = Vector3.Lerp(rotateMesh.forward, moveDir,
+				Time.deltaTime * (IsGrounded ? rotSmooth : rotSmoothSlow));
 			if (targetRotation != Vector3.zero)
 				rotateMesh.rotation = Quaternion.LookRotation(targetRotation);
 		}
-	}
-
-	IEnumerator DoRotateThing(Vector3 moveDir)
-	{
-		rotating = true;
-		Vector3 targetRotation = Vector3.Lerp(rotateMesh.forward, moveDir, Time.deltaTime * (IsGrounded ? rotSmooth : rotSmoothSlow));
-		rotateMesh.Rotate(0, 5, 0);
-		float speed = (IsGrounded ? rotSmooth*1.2f : rotSmoothSlow*2f);
-
-		while (Quaternion.Angle(Quaternion.LookRotation(moveDir), rotateMesh.rotation) > 1)
-		{
-			targetRotation = Vector3.Lerp(rotateMesh.forward, moveDir, Time.deltaTime * speed);
-			rotateMesh.rotation = Quaternion.LookRotation(targetRotation);
-			
-			yield return null;
-		}
-		rotating = false;
 	}
 
 	void SpeedUp(ref float speed)
