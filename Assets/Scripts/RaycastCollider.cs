@@ -20,14 +20,18 @@ public class RaycastCollider
 		this.transform = transform;
 		this.onFloor = onFloor;
 
-		directions = new Vector3[] { Vector3.down, Vector3.forward, Vector3.back, Vector3.left, Vector3.right };
-		originsForDirs = new int[,] { { 0, 1, 2, 3 }, { 2, 3, -1, -1 }, { 0, 1, -1, -1 },
-									  { 0, 2, -1, -1 }, { 1, 3, -1, -1 } };
+		//directions = new Vector3[] { Vector3.down, Vector3.forward, Vector3.back, Vector3.left, Vector3.right };
+		//originsForDirs = new int[,] { { 0, 1, 2, 3 }, { 2, 3, -1, -1 }, { 0, 1, -1, -1 },
+		//							  { 0, 2, -1, -1 }, { 1, 3, -1, -1 } };
+
+
+		directions = new Vector3[] { Vector3.down };
+		originsForDirs = new int[,] { { 0, -1, -1, -1, -1 } };
 	}
 
 	public void CustomUpdate(float playerDownVel)
 	{
-		origins = new Vector3[] { GetBottomLeft, GetBottomRight, GetTopLeft, GetTopRight };
+		origins = new Vector3[] { GetBottomCenter, GetBottomLeft, GetBottomRight, GetTopLeft, GetTopRight };
 
 		for (int i = 0; i < directions.Length; i++)
 		{
@@ -101,6 +105,7 @@ public class RaycastCollider
 	public Vector3 GetMax { get { return transform.position + GetExtents; } }   // top right
 	public Vector3 GetMin { get { return transform.position - GetExtents; } }   // bottom left
 
+	public Vector3 GetBottomCenter { get { Vector3 pos = transform.position; pos.y -= GetExtents.y; return pos; } }
 	public Vector3 GetBottomLeft { get { return GetMin; } }
 	public Vector3 GetTopRight { get { return new Vector3(transform.position.x + GetExtents.x, transform.position.y - GetExtents.y, transform.position.z + GetExtents.z); } }
 	public Vector3 GetTopLeft { get { return new Vector3(transform.position.x - GetExtents.x, transform.position.y - GetExtents.y, transform.position.z + GetExtents.z); } }
