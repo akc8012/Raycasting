@@ -8,7 +8,6 @@ public class PlayerController : MonoBehaviour
 	Text displayText;
 
 	RaycastCollider raycastCol;
-	PlayerTerrainCollider terrainCol;
 	Transform cam;
 
 	[SerializeField] Transform rotateMesh;
@@ -52,9 +51,6 @@ public class PlayerController : MonoBehaviour
 		raycastCol = new RaycastCollider();
 		raycastCol.Init(transform, onFloor);
 
-		terrainCol = new PlayerTerrainCollider();
-		terrainCol.Init(transform, bottom);
-
 		if (GameObject.Find("Text"))
 			displayText = GameObject.Find("Text").GetComponent<Text>();
 	}
@@ -80,9 +76,6 @@ public class PlayerController : MonoBehaviour
 		HandleJumpInput(Input.GetButtonDown("Jump"), Input.GetButton("Jump"), speed, ref vel);
 
 		Move(ref vel);
-		
-		//if (!IsRising && DownRay())
-		//	SnapToTerrainFloor();
 
 		isGrounded = false;
 		lastSpeed = speed;
@@ -169,30 +162,6 @@ public class PlayerController : MonoBehaviour
 		vel.y = Mathf.Clamp(vel.y, -maxFallSpeed, float.MaxValue);
 		transform.position += vel * Time.deltaTime;
 	}
-
-	bool DownRay()
-	{
-		RaycastHit hitMan;
-		Ray rayMan = new Ray(bottom.position, Vector3.down);
-		if (Physics.Raycast(rayMan, out hitMan, 20))
-		{
-			Terrain foundTerrain = hitMan.collider.gameObject.GetComponent<Terrain>();
-
-			if (foundTerrain && foundTerrain != terrainCol.CurrentTerrain)
-			{
-				terrainCol.SetTerrain(foundTerrain);
-			}
-		}
-
-		return terrainCol.CurrentTerrain && terrainCol.IsAcceptableDistance;
-	}
-
-	void SnapToTerrainFloor()
-	{
-		terrainCol.CustomUpdate();
-		onFloor();
-	}
-
 
 	IEnumerator Jump()
 	{
