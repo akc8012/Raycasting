@@ -11,8 +11,8 @@ public class RaycastCollider
 	Vector3[] directions;
 	int[,] originsForDirs;
 
-	float skinLength = 0.2f;
-	float rayLength = 0.2f;
+	float skinLength = 0.4f;
+	float rayLength = 0.4f;
 	float downRayVelMod = 0.02f;
 
 	public void Init(Transform transform, PlayerController.OnFloor onFloor)
@@ -20,13 +20,9 @@ public class RaycastCollider
 		this.transform = transform;
 		this.onFloor = onFloor;
 
-		//directions = new Vector3[] { Vector3.down, Vector3.forward, Vector3.back, Vector3.left, Vector3.right };
-		//originsForDirs = new int[,] { { 0, 1, 2, 3 }, { 2, 3, -1, -1 }, { 0, 1, -1, -1 },
-		//							  { 0, 2, -1, -1 }, { 1, 3, -1, -1 } };
-
-
-		directions = new Vector3[] { Vector3.down };
-		originsForDirs = new int[,] { { 0, -1, -1, -1, -1 } };
+		directions = new Vector3[] { Vector3.down, Vector3.forward, Vector3.back, Vector3.left, Vector3.right };
+		originsForDirs = new int[,] { { 0, 1, 2, 3, 4 }, { 3, 4, -1, -1, -1 }, { 1, 2, -1, -1, -1 },
+									  { 1, 3, -1, -1, -1 }, { 2, 4, -1, -1, -1 } };
 	}
 
 	public void CustomUpdate(float playerDownVel)
@@ -62,6 +58,13 @@ public class RaycastCollider
 		Debug.DrawLine(rayMan.origin, rayMan.origin + (rayMan.direction*length), Color.white);
 		if (Physics.Raycast(rayMan, out hitMan, length))
 		{
+			float dot = Vector3.Dot(rayMan.direction, hitMan.normal);
+			if (dot > -0.5f)
+			{
+				hitPos = Vector3.zero;
+				return false;
+			}
+
 			hitPos = hitMan.point;
 			return true;
 		}
