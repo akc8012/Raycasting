@@ -7,31 +7,31 @@ public class PlayerController : MonoBehaviour
 {
 	Text displayText;
 
-	RaycastCollider raycastCol;
+	PlayerCollider raycastCol;
 	Transform cam;
 
 	[SerializeField] Transform rotateMesh;
 	[SerializeField] Animator animator;
-	[SerializeField] Transform bottom;
 
-	[SerializeField] float maxSpeed = 10;       // what to increment velocity by
-	float maxFallSpeed = 30;
-	float rotSmooth = 20;		// smoothing on the lerp to rotate towards stick direction
-	float rotSmoothSlow = 5;       // smoothing on the lerp to rotate towards stick direction
+	[SerializeField] float maxSpeed = 6;       // what to increment velocity by
 	[SerializeField] float gravity = 35;
-	[SerializeField] float jumpSpeed = 10.5f;
+	[SerializeField] float jumpSpeed = 14;
+	[SerializeField] float acceleration = 0.2f;
+	[SerializeField] float deceleration = 0.75f;
 	[SerializeField] bool doAnimations = true;
 
 	Vector3 lastVel;
 	float jumpyVel;
 	float lastSpeed = 0;
-	float acceleration = 0.2f;
-	float deceleration = 0.75f;
 	float speedJumpedAt;
+	float currJumpSpeed;
 
+	const float rotSmooth = 20;          // smoothing on the lerp to rotate towards stick direction
+	const float rotSmoothSlow = 5;
+	const float maxFallSpeed = 30;
 	const float jumpDetraction = 0.25f;
 	const float fallDownFast = 0.90f;
-	float currJumpSpeed;
+
 	bool isGrounded = false;
 	public bool IsGrounded { get { return isGrounded; } }
 	public bool IsRising { get { return lastVel.y > 0; } }
@@ -48,8 +48,8 @@ public class PlayerController : MonoBehaviour
 
 		currJumpSpeed = jumpSpeed;
 
-		raycastCol = new RaycastCollider();
-		raycastCol.Init(transform, onFloor);
+		raycastCol = GetComponent<PlayerCollider>();
+		raycastCol.Init(onFloor);
 
 		if (GameObject.Find("Text"))
 			displayText = GameObject.Find("Text").GetComponent<Text>();
@@ -156,13 +156,6 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	void Move(ref Vector3 vel)
-	{
-		vel.y -= gravity * Time.deltaTime;
-		vel.y = Mathf.Clamp(vel.y, -maxFallSpeed, float.MaxValue);
-		transform.position += vel * Time.deltaTime;
-	}
-
 	IEnumerator Jump()
 	{
 		float valueBasedOnRunningJumpSpeed = Mathf.Clamp((speedJumpedAt / maxSpeed) + 0.4f, 0.9f, 1.14f);
@@ -172,6 +165,13 @@ public class PlayerController : MonoBehaviour
 			currJumpSpeed *= jumpDetraction;
 			yield return null;
 		}
+	}
+
+	void Move(ref Vector3 vel)
+	{
+		vel.y -= gravity * Time.deltaTime;
+		vel.y = Mathf.Clamp(vel.y, -maxFallSpeed, float.MaxValue);
+		transform.position += vel * Time.deltaTime;
 	}
 
 	void onFloor()

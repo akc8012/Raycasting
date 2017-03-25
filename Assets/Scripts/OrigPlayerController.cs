@@ -7,7 +7,7 @@ public class OrigPlayerController : MonoBehaviour
 {
 	Text displayText;
 
-	PlayerCollider col;
+	OrigPlayerCollider col;
 	PlayerTerrainCollider terrainCol;
 	Transform cam;
 	[SerializeField]
@@ -52,7 +52,7 @@ public class OrigPlayerController : MonoBehaviour
 		QualitySettings.vSyncCount = 0;
 		Application.targetFrameRate = 60;
 
-		col = new PlayerCollider();
+		col = new OrigPlayerCollider();
 		col.Init(transform, onFloor);
 		currJumpSpeed = jumpSpeed;
 
@@ -187,7 +187,7 @@ public class OrigPlayerController : MonoBehaviour
 	}
 
 	public Vector3 GetVel { get { return vel; } }
-	public PlayerCollider GetCol { get { return col; } }
+	public OrigPlayerCollider GetCol { get { return col; } }
 
 	bool DownRay()
 	{

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WallCollider : MonoBehaviour
 {
-	PlayerCollider player;
+	OrigPlayerCollider player;
 	enum Axis { X, Y, Z };
 	Axis axis;
 	Quaternion lastRotation;
