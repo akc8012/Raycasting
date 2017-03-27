@@ -5,23 +5,21 @@ using UnityEngine;
 public class PlayerCollider : MonoBehaviour
 {
 	[SerializeField] Vector3 size = Vector3.one;
+	[SerializeField] GameObject rayPointsRoot;
+	RayPoint[] rayPoints;
+
 	PlayerController.OnFloor onFloor;
 
-	Vector3[] origins;
-	Vector3[] directions;
-	int[,] originsForDirs;
-
-	float skinLength = 0.4f;
-	float rayLength = 0.4f;
+	float skinLength = 0.2f;
+	float rayLength = 0.2f;
 	float downRayVelMod = 1.25f;
+	float dotAllowance = -0.5f;	// lower is less lenient
 
 	public void Init(PlayerController.OnFloor onFloor)
 	{
 		this.onFloor = onFloor;
 
-		directions = new Vector3[] { Vector3.down, Vector3.forward, Vector3.back, Vector3.left, Vector3.right };
-		originsForDirs = new int[,] { { 0, 1, 2, 3, 4 }, { 3, 4, -1, -1, -1 }, { 1, 2, -1, -1, -1 },
-									  { 1, 3, -1, -1, -1 }, { 2, 4, -1, -1, -1 } };
+		rayPoints = rayPointsRoot.GetComponentsInChildren<RayPoint>();
 	}
 
 	void OnDrawGizmos()
@@ -32,23 +30,16 @@ public class PlayerCollider : MonoBehaviour
 
 	public void CustomUpdate(float playerDownVel)
 	{
-		origins = new Vector3[] { GetBottomCenter, GetBottomLeft, GetBottomRight, GetTopLeft, GetTopRight };
-
-		for (int i = 0; i < directions.Length; i++)
+		for (int i = 0; i < rayPoints.Length; i++)
 		{
-			for (int j = 0; j < origins.Length; j++)
+			Vector3 hitPos;
+			float mod = DownRayMod(playerDownVel, i);
+			if (ShootRay(rayPoints[i].GetPosition, rayPoints[i].GetDirection, out hitPos, mod))
 			{
-				if (originsForDirs[i, j] == -1) continue;
+				int axis = GetAxisOfDirection(rayPoints[i].GetDirection);
+				float pos = hitPos[axis] - (rayPoints[i].GetDirection[axis] * GetExtents[axis]);
 
-				Vector3 hitPos;
-				float mod = DownRayMod(playerDownVel, i);
-				if (ShootRay(origins[originsForDirs[i,j]], directions[i], out hitPos, mod))
-				{
-					int axis = GetAxisOfDirection(directions[i]);
-					float pos = hitPos[axis] - (directions[i][axis] * GetExtents[axis]);
-
-					SetPos(axis, pos);
-				}
+				SetPos(axis, pos);
 			}
 		}
 	}
@@ -64,7 +55,7 @@ public class PlayerCollider : MonoBehaviour
 		if (Physics.Raycast(rayMan, out hitMan, length))
 		{
 			float dot = Vector3.Dot(rayMan.direction, hitMan.normal);
-			if (dot > -0.5f)
+			if (dot > dotAllowance)
 			{
 				hitPos = Vector3.zero;
 				return false;
