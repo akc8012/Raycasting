@@ -50,19 +50,26 @@ public class CameraControl : MonoBehaviour {
 	CameraStates camState = CameraStates.BEHIND;
 
 	void Start () {
+		Cursor.lockState = CursorLockMode.Locked;
 
 		follow = GameObject.Find ("Follow").transform;
 		rotateMesh = GameObject.Find("RotateMesh").transform;
 
 		curLookDir = follow.forward;
-
 	}
 
 	void Update () {
-		
+		if (Input.GetMouseButtonDown(0))
+			Cursor.lockState = CursorLockMode.Locked;
+
+		if (Cursor.lockState == CursorLockMode.Locked)
+			Cursor.visible = false;
+		else Cursor.visible = true;
 	}
 
 	void LateUpdate () {
+		if (Cursor.lockState != CursorLockMode.Locked) return;  // only move camera when cursor is focused
+
 
 		Vector3 characterOffset = follow.position + new Vector3(0,distanceUp,0);
 
