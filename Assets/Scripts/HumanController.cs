@@ -16,8 +16,8 @@ public class HumanController : MonoBehaviour
 	[SerializeField] float maxSpeed = 6;       // what to increment velocity by
 	[SerializeField] float gravity = 35;
 	[SerializeField] float jumpSpeed = 14;
-	[SerializeField] float acceleration = 0.2f;
-	[SerializeField] float deceleration = 0.75f;
+	[SerializeField] float acceleration = 12.5f;
+	[SerializeField] float deceleration = 46.8f;
 	[SerializeField] bool doAnimations = true;
 
 	Vector3 lastVel;
@@ -125,13 +125,13 @@ public class HumanController : MonoBehaviour
 	{
 		float speedClamp = speed;
 		float airClamp = (IsGrounded ? 1 : (speedJumpedAt / maxSpeed) + 0.2f);
-		speed = lastSpeed + acceleration;
+		speed = lastSpeed + (acceleration * Time.deltaTime);
 		speed = Mathf.Clamp(speed, 0, maxSpeed * speedClamp * airClamp);
 	}
 
 	void SlowDown(ref float speed)
 	{
-		speed = lastSpeed - deceleration;
+		speed = lastSpeed - (deceleration * Time.deltaTime);
 		speed = Mathf.Clamp(speed, 0, maxSpeed);
 	}
 

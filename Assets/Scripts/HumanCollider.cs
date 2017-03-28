@@ -10,8 +10,8 @@ public class HumanCollider : MonoBehaviour
 
 	HumanController.OnFloor onFloor;
 
-	float skinLength = 0.2f;
-	float rayLength = 0.2f;
+	float skinLength = 12.5f;
+	float rayLength = 12.5f;
 	float downRayVelMod = 1.25f;
 	float dotAllowance = -0.5f;	// lower is less lenient
 
@@ -33,7 +33,7 @@ public class HumanCollider : MonoBehaviour
 		for (int i = 0; i < rayPoints.Length; i++)
 		{
 			Vector3 hitPos;
-			float mod = DownRayMod(playerDownVel, i);
+			float mod = DownRayMod(playerDownVel, rayPoints[i].GetDirection);
 			if (ShootRay(rayPoints[i].GetPosition, rayPoints[i].GetDirection, out hitPos, mod))
 			{
 				int axis = GetAxisOfDirection(rayPoints[i].GetDirection);
@@ -46,8 +46,8 @@ public class HumanCollider : MonoBehaviour
 
 	bool ShootRay(Vector3 origin, Vector3 direction, out Vector3 hitPos, float newLength)
 	{
-		origin -= direction * skinLength;     // when we're on the floor, make sure ray is high enough to still touch the floor
-		float length = newLength == -1 ? rayLength : newLength;
+		origin -= direction * skinLength*Time.deltaTime;     // when we're on the floor, make sure ray is high enough to still touch the floor
+		float length = newLength == -1 ? rayLength*Time.deltaTime : newLength;
 
 		RaycastHit hitMan;
 		Ray rayMan = new Ray(origin, direction);
@@ -88,12 +88,12 @@ public class HumanCollider : MonoBehaviour
 		return -1;
 	}
 
-	float DownRayMod(float playerDownVel, int i)
+	float DownRayMod(float playerDownVel, Vector3 direction)
 	{
-		if (i == 0)
+		if (direction == Vector3.down)
 		{
 			playerDownVel = -playerDownVel * downRayVelMod * Time.deltaTime;
-			return Mathf.Clamp(playerDownVel, rayLength, float.MaxValue);
+			return Mathf.Clamp(playerDownVel, rayLength*Time.deltaTime, float.MaxValue);
 		}
 
 		return -1;

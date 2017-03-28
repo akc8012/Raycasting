@@ -19,6 +19,9 @@ public class CameraControl : MonoBehaviour {
 	rightX,
 	rightY;
 
+	const float xSpeed = 190;
+	const float ySpeed = 6.25f;
+
 	Transform
 	follow,
 	rotateMesh;
@@ -81,7 +84,7 @@ public class CameraControl : MonoBehaviour {
 		#region FREE CAMERA MOVEMENT
 
 		#region DISTANCE UP
-		rightStickPrevFrame.y = 0.1f * rightY * (invertY ? 1 : -1);
+		rightStickPrevFrame.y = (ySpeed*Time.deltaTime) * rightY * (invertY ? 1 : -1);
 
 		if (distanceUp >= 0 && distanceUp <= 8)
 			distanceUp += rightStickPrevFrame.y;
@@ -92,7 +95,7 @@ public class CameraControl : MonoBehaviour {
 
 		#region CAMERA ROTATION ADJUST
 
-		rightStickPrevFrame.x += 3 * rightX * (invertX ? 1 : -1);
+		rightStickPrevFrame.x += (xSpeed*Time.deltaTime) * rightX * (invertX ? 1 : -1);
 
 		follow.rotation = Quaternion.Euler(Vector3.down * follow.parent.eulerAngles.y + new Vector3(0,follow.parent.eulerAngles.y,0));
 

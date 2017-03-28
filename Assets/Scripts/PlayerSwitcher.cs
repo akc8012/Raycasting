@@ -71,6 +71,7 @@ public class PlayerSwitcher : MonoBehaviour
 				rb.detectCollisions = false;
 
 				transform.rotation = Quaternion.identity;
+				transform.position += Vector3.up * 0.3f;
 				humanController.enabled = true;
 			break;
 

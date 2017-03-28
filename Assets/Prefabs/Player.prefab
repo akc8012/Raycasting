@@ -242,7 +242,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1230884051307996
 GameObject:
   m_ObjectHideFlags: 0
@@ -1992,7 +1992,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1230884051307996}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.63, z: 0}
+  m_LocalPosition: {x: 7.09, y: 10, z: -7.42}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4768151676531038}
@@ -2289,11 +2289,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotateMesh: {fileID: 4768151676531038}
   animator: {fileID: 95487712220293180}
-  maxSpeed: 6
+  maxSpeed: 8
   gravity: 35
-  jumpSpeed: 14
-  acceleration: 0.2
-  deceleration: 0.75
+  jumpSpeed: 15
+  acceleration: 30
+  deceleration: 45
   doAnimations: 0
 --- !u!114 &114442579815042424
 MonoBehaviour:
