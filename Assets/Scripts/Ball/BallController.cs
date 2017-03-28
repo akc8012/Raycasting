@@ -5,8 +5,8 @@ using System.Collections;
 
 // Function:  Contains all movement and input information
 
-public class BallController : MonoBehaviour {
-
+public class BallController : MonoBehaviour
+{
 	Rigidbody 
 		rb;
 
@@ -110,7 +110,8 @@ public class BallController : MonoBehaviour {
 
 	// This prevents the player from flying off of ledges and ramps
 	// Also limits air control to the degree specified
-	void Grounded(){
+	void Grounded()
+	{
 		if (!grounded && !jumping) {
 			rb.mass = 100;
 		} else if(!jumping){
@@ -120,7 +121,8 @@ public class BallController : MonoBehaviour {
 
 	// When no keys are pressed, slow down the player faster allowing
 	// for faster direction shifts
-	void MovementLimits(Vector3 movement){
+	void MovementLimits(Vector3 movement)
+	{
 		if (movement == Vector3.zero) {
 			rb.mass = 100;
 			if(grounded && controlsToggle)

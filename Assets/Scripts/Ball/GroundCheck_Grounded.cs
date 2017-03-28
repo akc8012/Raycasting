@@ -6,46 +6,40 @@ using System.Collections;
 // Purpose:  Tells the player if it is grounded or not, and modifies movement
 // 				based on slope angle.
 
-public class GroundCheck_Grounded : MonoBehaviour {
-
-	GameObject 
-		player;
+public class GroundCheck_Grounded : MonoBehaviour
+{
+	BallController ballController;
 
 	void Start () 
 	{
-		
+		ballController = GetComponent<BallController>();
 	}
 
-	void Update () 
-	{
-		player = GameObject.FindWithTag ("Player");
-	}
-
-	void OnTriggerEnter(Collider col){
+	void OnCollisionEnter(Collision col){
 		if (col.gameObject.tag == "Ground" || col.gameObject.tag == "Ramp") {
-			player.GetComponent<BallController> ().IsJumping (false);
+			ballController.IsJumping (false);
 		}
 	}
 
-	void OnTriggerStay(Collider col)
+	void OnCollisionStay(Collision col)
 	{
 		if (col.gameObject.tag == "Ground" || col.gameObject.tag == "Ramp") {
-			player.GetComponent<BallController> ().IsGrounded (true);
+			ballController.IsGrounded (true);
 		}
 
 		if(col.gameObject.tag == "Ramp"){
-			if (col.GetComponent<Terrain_ManageableTerrain>().ManageableTerrain == false) {
-				player.GetComponent<BallController> ().ToggleControls (false);
+			if (col.gameObject.GetComponent<Terrain_ManageableTerrain>().ManageableTerrain == false) {
+				ballController.ToggleControls (false);
 			}
 		}
 	}
 
-	void OnTriggerExit(Collider col)
+	void OnCollisionExit(Collision col)
 	{
-		player.GetComponent<BallController> ().ToggleControls (true);
+		ballController.ToggleControls (true);
 
 		if (col.gameObject.tag == "Ground" || col.gameObject.tag == "Ramp") {
-			player.GetComponent<BallController> ().IsGrounded (false);
+			ballController.IsGrounded (false);
 		}
 	}
 }
