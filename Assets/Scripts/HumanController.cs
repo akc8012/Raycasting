@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour
+public class HumanController : MonoBehaviour
 {
 	Text displayText;
 
-	PlayerCollider raycastCol;
+	HumanCollider raycastCol;
 	Transform cam;
 
 	[SerializeField] Transform rotateMesh;
@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour
 
 		currJumpSpeed = jumpSpeed;
 
-		raycastCol = GetComponent<PlayerCollider>();
+		raycastCol = GetComponent<HumanCollider>();
 		raycastCol.Init(onFloor);
 
 		if (GameObject.Find("Text"))

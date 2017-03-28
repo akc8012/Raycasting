@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerCollider : MonoBehaviour
+public class HumanCollider : MonoBehaviour
 {
 	[SerializeField] Vector3 size = Vector3.one;
 	[SerializeField] GameObject rayPointsRoot;
 	RayPoint[] rayPoints;
 
-	PlayerController.OnFloor onFloor;
+	HumanController.OnFloor onFloor;
 
 	float skinLength = 0.2f;
 	float rayLength = 0.2f;
 	float downRayVelMod = 1.25f;
 	float dotAllowance = -0.5f;	// lower is less lenient
 
-	public void Init(PlayerController.OnFloor onFloor)
+	public void Init(HumanController.OnFloor onFloor)
 	{
 		this.onFloor = onFloor;
 
