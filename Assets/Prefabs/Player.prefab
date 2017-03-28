@@ -2250,7 +2250,7 @@ MonoBehaviour:
   playerObj: {fileID: 1230884051307996}
   parentRig: {fileID: 1706350440612452}
   camMinDistanceFromCharacter: {x: 1, y: -0.5}
-  invertX: 0
+  invertX: 1
   invertY: 1
 --- !u!114 &114377772814581720
 MonoBehaviour:

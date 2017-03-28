@@ -6,6 +6,7 @@ public class PlayerSwitcher : MonoBehaviour
 {
 	enum PlayerState { Human, Ball };
 	PlayerState state;
+	float lastAxis;
 
 	Rigidbody rb;
 	[SerializeField] GameObject humanMesh;
@@ -25,15 +26,34 @@ public class PlayerSwitcher : MonoBehaviour
 	
 	void Update ()
 	{
-		if (Input.GetMouseButtonDown(1))
+		float currentAxis = Input.GetButton("BallToggle") == true ? -1 : 0;
+		if (currentAxis == 0) currentAxis = Input.GetAxisRaw("BallToggle");
+
+		if (currentAxis != lastAxis && (CloseEnough(currentAxis, 0.0f) || CloseEnough(currentAxis, -1.0f)))
 		{
-			if (state == PlayerState.Human)
-				state = PlayerState.Ball;
-			else
+			if (CloseEnough(currentAxis, 0.0f))
 				state = PlayerState.Human;
+			else
+				state = PlayerState.Ball;
 
 			SwitchState(state);
 		}
+
+		lastAxis = SnapToANum(currentAxis, 0.0f, -1.0f);
+	}
+
+	bool CloseEnough(float num, float target)
+	{
+		return (Mathf.Abs(num - target) < 0.3f);
+	}
+
+	float SnapToANum(float num, float targetA, float targetB)
+	{
+		float a = Mathf.Abs(num - targetA);
+		float b = Mathf.Abs(num - targetB);
+
+		if (a < b) return targetA;
+		else return targetB;
 	}
 
 	void SwitchState(PlayerState newState)

@@ -117,7 +117,7 @@ public class CameraControl : MonoBehaviour {
 
 		targetPosition = Vector3.zero;
 
-		if (Input.GetKey (KeyCode.LeftShift)) {
+		if (Input.GetButton ("CameraBehind")) {
 
 			camState = CameraStates.BEHIND;
 
