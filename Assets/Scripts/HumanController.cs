@@ -124,7 +124,8 @@ public class HumanController : MonoBehaviour
 	void SpeedUp(ref float speed)
 	{
 		float speedClamp = speed;
-		float airClamp = (IsGrounded ? 1 : (speedJumpedAt / maxSpeed) + 0.2f);
+		const float speedFloor = 0.2f;
+		float airClamp = (IsGrounded ? 1 : (speedJumpedAt / maxSpeed) + speedFloor);
 		speed = lastSpeed + (acceleration * Time.deltaTime);
 		speed = Mathf.Clamp(speed, 0, maxSpeed * speedClamp * airClamp);
 	}
@@ -158,7 +159,11 @@ public class HumanController : MonoBehaviour
 
 	IEnumerator Jump()
 	{
-		float valueBasedOnRunningJumpSpeed = Mathf.Clamp((speedJumpedAt / maxSpeed) + 0.4f, 0.9f, 1.14f);
+		const float floor = 0.4f;
+		const float min = 0.9f;
+		const float max = 1.12f;
+
+		float valueBasedOnRunningJumpSpeed = Mathf.Clamp((speedJumpedAt / maxSpeed) + floor, min, max);
 		while (true)
 		{
 			jumpyVel = jumpyVel + (currJumpSpeed * valueBasedOnRunningJumpSpeed);

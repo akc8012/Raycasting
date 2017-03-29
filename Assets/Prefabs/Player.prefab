@@ -1992,7 +1992,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1230884051307996}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.09, y: 10, z: -7.42}
+  m_LocalPosition: {x: 0, y: 2.11, z: -81.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4768151676531038}
@@ -2289,9 +2289,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotateMesh: {fileID: 4768151676531038}
   animator: {fileID: 95487712220293180}
-  maxSpeed: 8
-  gravity: 35
-  jumpSpeed: 15
+  maxSpeed: 7
+  gravity: 50
+  jumpSpeed: 20
   acceleration: 30
   deceleration: 45
   doAnimations: 0
@@ -2380,7 +2380,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b09e76c64676dbd48bd7828c2639c75a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 30
+  speed: 100
   maxVelocity: 8
   jumpPower: 250
   jumpPowerSecond: 550

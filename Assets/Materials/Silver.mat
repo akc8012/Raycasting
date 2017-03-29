@@ -87,7 +87,7 @@ Material:
       second: 1
     - first:
         name: _Glossiness
-      second: 0.629
+      second: 0.467
     - first:
         name: _GlossyReflections
       second: 1
@@ -121,7 +121,7 @@ Material:
     m_Colors:
     - first:
         name: _Color
-      second: {r: 0.78676474, g: 0.78676474, b: 0.78676474, a: 1}
+      second: {r: 0.7352941, g: 0.7352941, b: 0.7352941, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}

@@ -16,30 +16,30 @@ public class GroundCheck_Grounded : MonoBehaviour
 	}
 
 	void OnCollisionEnter(Collision col){
-		if (col.gameObject.tag == "Ground" || col.gameObject.tag == "Ramp") {
+		//if (col.gameObject.tag == "Ground" || col.gameObject.tag == "Ramp") {
 			ballController.IsJumping (false);
-		}
+		//}
 	}
 
 	void OnCollisionStay(Collision col)
 	{
-		if (col.gameObject.tag == "Ground" || col.gameObject.tag == "Ramp") {
+		//if (col.gameObject.tag == "Ground" || col.gameObject.tag == "Ramp") {
 			ballController.IsGrounded (true);
-		}
+		//}
 
-		if(col.gameObject.tag == "Ramp"){
-			if (col.gameObject.GetComponent<Terrain_ManageableTerrain>().ManageableTerrain == false) {
-				ballController.ToggleControls (false);
-			}
-		}
+		//if(col.gameObject.tag == "Ramp"){
+		//	if (col.gameObject.GetComponent<Terrain_ManageableTerrain>().ManageableTerrain == false) {
+		//		ballController.ToggleControls (false);
+		//	}
+		//}
 	}
 
 	void OnCollisionExit(Collision col)
 	{
 		ballController.ToggleControls (true);
 
-		if (col.gameObject.tag == "Ground" || col.gameObject.tag == "Ramp") {
+		//if (col.gameObject.tag == "Ground" || col.gameObject.tag == "Ramp") {
 			ballController.IsGrounded (false);
-		}
+		//}
 	}
 }

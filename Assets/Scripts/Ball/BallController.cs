@@ -70,7 +70,7 @@ public class BallController : MonoBehaviour
 		if (controlsToggle) {
 			horizMovement = Input.GetAxisRaw ("Horizontal");
 			vertMovement = Input.GetAxisRaw ("Vertical");
-			jump = Input.GetButtonDown ("Jump");
+			jump = false;	//Input.GetButtonDown ("Jump");
 		} else {
 			horizMovement = 0;
 			vertMovement = 0;
