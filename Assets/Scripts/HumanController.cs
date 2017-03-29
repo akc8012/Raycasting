@@ -20,6 +20,7 @@ public class HumanController : MonoBehaviour
 	[SerializeField] float deceleration = 46.8f;
 	[SerializeField] bool doAnimations = true;
 
+	Vector3 startPos;
 	Vector3 lastVel;
 	float jumpyVel;
 	float lastSpeed = 0;
@@ -47,6 +48,7 @@ public class HumanController : MonoBehaviour
 		Application.targetFrameRate = 60;
 
 		currJumpSpeed = jumpSpeed;
+		startPos = transform.position;
 
 		raycastCol = GetComponent<HumanCollider>();
 		raycastCol.Init(onFloor);
@@ -86,6 +88,9 @@ public class HumanController : MonoBehaviour
 	void LateUpdate()
 	{
 		raycastCol.CustomUpdate(lastVel.y);
+
+		if (Input.GetKeyDown(KeyCode.Alpha1))
+			transform.position = startPos;
 	}
 
 	Vector3 GetMoveDirection(ref float speed)
