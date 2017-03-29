@@ -8,6 +8,7 @@ public class HumanCollider : MonoBehaviour
 	[SerializeField] GameObject rayPointsRoot;
 	RayPoint[] rayPoints;
 
+	GameObject drawBox;
 	HumanController.OnFloor onFloor;
 
 	float skinLength = 12.5f;
@@ -20,6 +21,7 @@ public class HumanCollider : MonoBehaviour
 		this.onFloor = onFloor;
 
 		rayPoints = rayPointsRoot.GetComponentsInChildren<RayPoint>();
+		drawBox = transform.Find("Collider Draw Box").gameObject;
 	}
 
 	void OnDrawGizmos()
@@ -42,6 +44,9 @@ public class HumanCollider : MonoBehaviour
 				SetPos(axis, pos);
 			}
 		}
+
+		if (Input.GetKeyDown(KeyCode.C))
+			drawBox.SetActive(!drawBox.activeSelf);
 	}
 
 	bool ShootRay(Vector3 origin, Vector3 direction, out Vector3 hitPos, float newLength)

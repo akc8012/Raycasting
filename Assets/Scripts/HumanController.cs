@@ -129,7 +129,7 @@ public class HumanController : MonoBehaviour
 	void SpeedUp(ref float speed)
 	{
 		float speedClamp = speed;
-		const float speedFloor = 0.6f;
+		const float speedFloor = 0.7f;
 		const float maxClamp = 1.2f;
 		float airClamp = 1;
 
@@ -174,7 +174,7 @@ public class HumanController : MonoBehaviour
 	{
 		const float floor = 0.4f;
 		const float min = 0.9f;
-		const float max = 1.12f;
+		const float max = 1.14f;
 
 		float valueBasedOnRunningJumpSpeed = Mathf.Clamp((speedJumpedAt / maxSpeed) + floor, min, max);
 		while (true)
