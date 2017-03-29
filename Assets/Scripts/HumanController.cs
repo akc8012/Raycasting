@@ -129,8 +129,16 @@ public class HumanController : MonoBehaviour
 	void SpeedUp(ref float speed)
 	{
 		float speedClamp = speed;
-		const float speedFloor = 0.2f;
-		float airClamp = (IsGrounded ? 1 : (speedJumpedAt / maxSpeed) + speedFloor);
+		const float speedFloor = 0.6f;
+		const float maxClamp = 1.2f;
+		float airClamp = 1;
+
+		if (!IsGrounded)
+		{
+			airClamp = (speedJumpedAt / maxSpeed) + speedFloor;      // percentage
+			if (airClamp > maxClamp) airClamp = maxClamp;
+		}
+
 		speed = lastSpeed + (acceleration * Time.deltaTime);
 		speed = Mathf.Clamp(speed, 0, maxSpeed * speedClamp * airClamp);
 	}
