@@ -16,10 +16,6 @@ public class BallController : MonoBehaviour
 		jumpPower = 5,
 		jumpPowerSecond = 5;
 
-	float 
-		horizMovement,
-		vertMovement;
-
 	[SerializeField][Range(0.90f,0.99f)]
 	float
 		playerSlowdownSpeed = 0.95f;
@@ -31,10 +27,6 @@ public class BallController : MonoBehaviour
 		jumping = false,
 		jump = false,
 		secondJump = false;
-
-	Vector3 movement;
-
-	public Vector3 Movement { get { return movement; } set { movement = value; } }
 
 	void Start () 
 	{
@@ -65,21 +57,19 @@ public class BallController : MonoBehaviour
 	// called before any physics calculations (put physics here)
 	void FixedUpdate()
 	{
+		float horizMovement = 0;
+		float vertMovement = 0;
+
 		if (controlsToggle)
 		{
 			horizMovement = Input.GetAxisRaw ("Horizontal");
 			vertMovement = Input.GetAxisRaw ("Vertical");
 			jump = false;	//Input.GetButtonDown ("Jump");
 		}
-		else
-		{
-			horizMovement = 0;
-			vertMovement = 0;
-		}
 
 		Grounded ();
 
-		movement = Camera.main.transform.forward * vertMovement;
+		Vector3 movement = Camera.main.transform.forward * vertMovement;
 		movement += Camera.main.transform.right * horizMovement;
 		movement *= speed;
 
