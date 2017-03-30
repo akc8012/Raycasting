@@ -13,6 +13,7 @@ public class PlayerSwitcher : MonoBehaviour
 	[SerializeField] GameObject ballMesh;
 	HumanController humanController;
 	BallController ballController;
+	bool enableMeshSwitch = true;
 
 	void Awake ()
 	{
@@ -22,6 +23,11 @@ public class PlayerSwitcher : MonoBehaviour
 		ballController = GetComponent<BallController>();
 
 		SwitchState(state);
+	}
+
+	public void DisableMeshSwitch()
+	{
+		enableMeshSwitch = false;
 	}
 	
 	void Update ()
@@ -76,8 +82,11 @@ public class PlayerSwitcher : MonoBehaviour
 			break;
 
 			case PlayerState.Ball:
-				humanMesh.SetActive(false);
-				ballMesh.SetActive(true);
+				if (enableMeshSwitch)
+				{
+					humanMesh.SetActive(false);
+					ballMesh.SetActive(true);
+				} else humanMesh.SetActive(true);
 
 				humanController.enabled = false;
 

@@ -26,6 +26,9 @@ public class MarbleManager : MonoBehaviour
 	{
 		collected++;
 		marbleText.text = collected + " / " + marbles.Length;
+
+		if (collected >= marbles.Length)
+			GameObject.FindWithTag("Player").GetComponent<PlayerSwitcher>().DisableMeshSwitch();
 	}
 
 	void Respawn()
