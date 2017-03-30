@@ -7,8 +7,7 @@ using System.Collections;
 
 public class BallController : MonoBehaviour
 {
-	Rigidbody 
-		rb;
+	Rigidbody rb;
 
 	[SerializeField]
 	int 
@@ -33,10 +32,9 @@ public class BallController : MonoBehaviour
 		jump = false,
 		secondJump = false;
 
-	Vector3 
-		movement;
+	Vector3 movement;
 
-	public Vector3 Movement{get{ return movement; }set{ movement = value;}}
+	public Vector3 Movement { get { return movement; } set { movement = value; } }
 
 	void Start () 
 	{
@@ -67,11 +65,14 @@ public class BallController : MonoBehaviour
 	// called before any physics calculations (put physics here)
 	void FixedUpdate()
 	{
-		if (controlsToggle) {
+		if (controlsToggle)
+		{
 			horizMovement = Input.GetAxisRaw ("Horizontal");
 			vertMovement = Input.GetAxisRaw ("Vertical");
 			jump = false;	//Input.GetButtonDown ("Jump");
-		} else {
+		}
+		else
+		{
 			horizMovement = 0;
 			vertMovement = 0;
 		}
@@ -82,15 +83,14 @@ public class BallController : MonoBehaviour
 		movement += Camera.main.transform.right * horizMovement;
 		movement *= speed;
 
-		if (jumping) {
+		if (jumping)
 			movement *= 0.6f;
-		}
 
-		if (rb.velocity.magnitude < maxVelocity) {
-			rb.AddForce (movement);
-		}
+		if (rb.velocity.magnitude < maxVelocity)
+			rb.AddForce(movement);
 
-		if (secondJump && jumping && jump) {
+		if (secondJump && jumping && jump)
+		{
 			Vector3 temp = rb.velocity;
 			temp.y = 0;
 			rb.velocity = temp;
@@ -98,36 +98,40 @@ public class BallController : MonoBehaviour
 			secondJump = false;
 		}
 
-		if (grounded && jump) {
+		if (grounded && jump)
+		{
 			rb.AddForce (0, jumpPower, 0);
 			jumping = true;
 			secondJump = true;
 			rb.mass = 2;
 		}
 
-		MovementLimits (movement);
+		MovementLimits(movement);
 	}
 
 	// This prevents the player from flying off of ledges and ramps
 	// Also limits air control to the degree specified
 	void Grounded()
 	{
-		if (!grounded && !jumping) {
+		if (!grounded && !jumping)
 			rb.mass = 100;
-		} else if(!jumping){
+		else if(!jumping)
 			rb.mass = 1;
-		}
 	}
 
 	// When no keys are pressed, slow down the player faster allowing
 	// for faster direction shifts
 	void MovementLimits(Vector3 movement)
 	{
-		if (movement == Vector3.zero) {
+		if (movement == Vector3.zero)
+		{
 			rb.mass = 100;
+
 			if(grounded && controlsToggle)
 				rb.velocity *= playerSlowdownSpeed;
-		} else if (!jumping) {
+		}
+		else if (!jumping)
+		{
 			rb.mass = 1;
 		}
 	}
