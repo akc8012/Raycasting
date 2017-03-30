@@ -8,6 +8,7 @@ using System.Collections;
 public class BallController : MonoBehaviour
 {
 	Rigidbody rb;
+	Transform cam;
 
 	[SerializeField]
 	int 
@@ -31,6 +32,7 @@ public class BallController : MonoBehaviour
 	void Start () 
 	{
 		rb = GetComponent<Rigidbody> ();
+		cam = Camera.main.transform;
 	}
 
 	// called before rendering a frame
@@ -60,6 +62,7 @@ public class BallController : MonoBehaviour
 		float horizMovement = 0;
 		float vertMovement = 0;
 
+		print(controlsToggle);
 		if (controlsToggle)
 		{
 			horizMovement = Input.GetAxisRaw ("Horizontal");
@@ -69,7 +72,11 @@ public class BallController : MonoBehaviour
 
 		Grounded ();
 
-		Vector3 movement = Camera.main.transform.forward * vertMovement;
+		// camera forward should be facing straight, the forward points in direction of facing
+
+		Vector3 camForward = cam.forward;
+		camForward.y = 0;
+		Vector3 movement = camForward * vertMovement;
 		movement += Camera.main.transform.right * horizMovement;
 		movement *= speed;
 
