@@ -26,6 +26,7 @@ public class HumanController : MonoBehaviour
 	float lastSpeed = 0;
 	float speedJumpedAt;
 	float currJumpSpeed;
+	bool enableReJump = true;
 
 	const float rotSmooth = 20;          // smoothing on the lerp to rotate towards stick direction
 	const float rotSmoothSlow = 5;
@@ -35,7 +36,7 @@ public class HumanController : MonoBehaviour
 
 	bool isGrounded = false;
 	public bool IsGrounded { get { return isGrounded; } }
-	public bool IsRising { get { return lastVel.y > 0; } }
+	public bool IsFalling { get { return lastVel.y <= 0; } }
 
 	public Vector3 GetVel { get { return lastVel; } }
 
@@ -75,7 +76,7 @@ public class HumanController : MonoBehaviour
 		Vector3 vel = rotateMesh.forward * speed;
 		vel.y = lastVel.y + jumpyVel;
 
-		HandleJumpInput(Input.GetButtonDown("Jump"), Input.GetButton("Jump"), speed, ref vel);
+		HandleJumpInput(Input.GetButton("Jump"), speed, ref vel);
 
 		Move(ref vel);
 
@@ -149,25 +150,28 @@ public class HumanController : MonoBehaviour
 		speed = Mathf.Clamp(speed, 0, maxSpeed);
 	}
 
-	void HandleJumpInput(bool jumpButtonDown, bool jumpHeld, float speed, ref Vector3 vel)
+	void HandleJumpInput(bool jumpHeld, float speed, ref Vector3 vel)
 	{
-		if (jumpButtonDown && IsGrounded)
+		if (jumpHeld && IsGrounded && enableReJump)
 		{
 			if (doAnimations) animator.SetTrigger("Jump");
 			speedJumpedAt = speed;
 			StartCoroutine("Jump");
+			enableReJump = false;
 			return;
 		}
 
-		if ((!jumpHeld && !isGrounded) || !IsRising)
+		if ((!jumpHeld && !isGrounded) || IsFalling)
 		{
-			if (IsRising)      // set vel to fall down faster
+			if (!IsFalling)      // set vel to fall down faster
 				vel.y *= fallDownFast;
 
 			StopCoroutine("Jump");
 			currJumpSpeed = jumpSpeed;
 			jumpyVel = 0;
 		}
+
+		if (IsFalling && !jumpHeld) enableReJump = true;
 	}
 
 	IEnumerator Jump()
