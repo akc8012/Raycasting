@@ -6,6 +6,12 @@ public class RayPoint : MonoBehaviour
 {
 	[SerializeField] Direction direction;
 	enum Direction { Down, Forward, Back, Left, Right };
+	[SerializeField] bool longRay = false;
+	public bool IsLongRay { get { return longRay; } }
+
+	[SerializeField] float length = 1;
+	public float GetLength { get { return length; } }
+
 	public Vector3 GetDirection
 	{
 		get

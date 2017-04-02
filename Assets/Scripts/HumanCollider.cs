@@ -11,10 +11,10 @@ public class HumanCollider : MonoBehaviour
 	GameObject drawBox;
 	HumanController.OnFloor onFloor;
 
-	float skinLength = 12.5f;
-	float rayLength = 12.5f;
-	float downRayVelMod = 1.25f;
-	float dotAllowance = -0.5f;	// lower is less lenient
+	const float skinLength = 12.5f;
+	const float rayLength = 12.5f;
+	const float downRayVelMod = 1.25f;
+	const float dotAllowance = -0.5f;	// lower is less lenient
 
 	public void Init(HumanController.OnFloor onFloor)
 	{
@@ -30,13 +30,20 @@ public class HumanCollider : MonoBehaviour
 		Gizmos.DrawWireCube(transform.position, size);
 	}
 
-	public void CustomUpdate(float playerDownVel)
+	public void CustomUpdate(float playerDownVel, Vector3 playerBack)
 	{
 		for (int i = 0; i < rayPoints.Length; i++)
 		{
 			Vector3 hitPos;
-			float mod = DownRayMod(playerDownVel, rayPoints[i].GetDirection);
-			if (ShootRay(rayPoints[i].GetPosition, rayPoints[i].GetDirection, out hitPos, mod))
+
+			float length;
+			if (!rayPoints[i].IsLongRay)
+				length = GetRayLength(i, playerDownVel, rayPoints[i].GetDirection, playerBack);
+			else
+				length = rayPoints[i].GetLength;
+
+
+			if (ShootRay(rayPoints[i].GetPosition, rayPoints[i].GetDirection, length, out hitPos))
 			{
 				int axis = GetAxisOfDirection(rayPoints[i].GetDirection);
 				float pos = hitPos[axis] - (rayPoints[i].GetDirection[axis] * GetExtents[axis]);
@@ -49,10 +56,9 @@ public class HumanCollider : MonoBehaviour
 			drawBox.SetActive(!drawBox.activeSelf);
 	}
 
-	bool ShootRay(Vector3 origin, Vector3 direction, out Vector3 hitPos, float newLength)
+	bool ShootRay(Vector3 origin, Vector3 direction, float length, out Vector3 hitPos)
 	{
 		origin -= direction * skinLength*Time.deltaTime;     // when we're on the floor, make sure ray is high enough to still touch the floor
-		float length = newLength == -1 ? rayLength*Time.deltaTime : newLength;
 
 		RaycastHit hitMan;
 		Ray rayMan = new Ray(origin, direction);
@@ -93,15 +99,43 @@ public class HumanCollider : MonoBehaviour
 		return -1;
 	}
 
-	float DownRayMod(float playerDownVel, Vector3 direction)
+	float GetRayLength(int rayNdx, float playerDownVel, Vector3 rayDir, Vector3 playerBack)
 	{
-		if (direction == Vector3.down)
+		if (rayDir == Vector3.down)
 		{
+			float backRay = 0;
+			if (IsBackRay(rayNdx, playerBack))
+				backRay = 0.3f;		// some constant or wacky value
+
 			playerDownVel = -playerDownVel * downRayVelMod * Time.deltaTime;
-			return Mathf.Clamp(playerDownVel, rayLength*Time.deltaTime, float.MaxValue);
+			float gravityRay = Mathf.Clamp(playerDownVel, rayLength*Time.deltaTime, float.MaxValue);
+
+			return Mathf.Max(gravityRay, backRay);
 		}
 
-		return -1;
+		return rayLength*Time.deltaTime;
+	}
+
+	bool IsBackRay(int rayNdx, Vector3 playerBack)
+	{
+		Vector3 backPoint = transform.position + playerBack;	// extend or retract this based on the "radius" of collider
+		float minDist = float.MaxValue;
+		int targetI = -1;
+
+		for (int i = 0; i < rayPoints.Length; i++)
+		{
+			if (rayPoints[i].GetDirection == Vector3.down)
+			{
+				float dist = Vector3.Distance(rayPoints[i].GetPosition, backPoint);
+				if (dist < minDist)
+				{
+					minDist = dist;
+					targetI = i;
+				}
+			}
+		}
+
+		return (targetI == rayNdx);
 	}
 
 	public Vector3 GetExtents { get { return size / 2; } }

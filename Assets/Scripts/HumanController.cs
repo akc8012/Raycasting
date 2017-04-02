@@ -88,7 +88,7 @@ public class HumanController : MonoBehaviour
 
 	void LateUpdate()
 	{
-		raycastCol.CustomUpdate(lastVel.y);
+		raycastCol.CustomUpdate(lastVel.y, -rotateMesh.forward);
 
 		if (Input.GetKeyDown(KeyCode.Alpha1))
 			transform.position = startPos;

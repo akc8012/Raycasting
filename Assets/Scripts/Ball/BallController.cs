@@ -62,7 +62,6 @@ public class BallController : MonoBehaviour
 		float horizMovement = 0;
 		float vertMovement = 0;
 
-		print(controlsToggle);
 		if (controlsToggle)
 		{
 			horizMovement = Input.GetAxisRaw ("Horizontal");

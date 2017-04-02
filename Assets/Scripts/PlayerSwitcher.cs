@@ -74,7 +74,7 @@ public class PlayerSwitcher : MonoBehaviour
 
 				rb.isKinematic = true;
 				rb.useGravity = false;
-				rb.detectCollisions = false;
+				//rb.detectCollisions = false;
 
 				transform.rotation = Quaternion.identity;
 				transform.position += Vector3.up * 0.3f;
@@ -92,7 +92,7 @@ public class PlayerSwitcher : MonoBehaviour
 
 				rb.isKinematic = false;
 				rb.useGravity = true;
-				rb.detectCollisions = true;
+				//rb.detectCollisions = true;
 
 				ballController.enabled = true;
 			break;
