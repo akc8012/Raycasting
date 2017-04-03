@@ -25,7 +25,7 @@ public class HumanCollider : MonoBehaviour
 		drawBox = transform.Find("Collider Draw Box").gameObject;
 	}
 
-	void OnDrawGizmos()
+	void OnDrawGizmosSelected()
 	{
 		Gizmos.color = Color.green;
 		Gizmos.DrawWireCube(transform.position, size);
@@ -37,12 +37,7 @@ public class HumanCollider : MonoBehaviour
 		{
 			Vector3 hitPos;
 
-			float length;
-			if (!rayPoints[i].IsLongRay)
-				length = GetRayLength(i, playerDownVel, rayPoints[i].GetDirection, playerBack);
-			else
-				length = rayPoints[i].GetLength;
-
+			float length = GetRayLength(i, playerDownVel, rayPoints[i].GetDirection, playerBack);
 
 			if (ShootRay(rayPoints[i].GetPosition, rayPoints[i].GetDirection, length, out hitPos))
 			{
@@ -111,7 +106,7 @@ public class HumanCollider : MonoBehaviour
 			playerDownVel = -playerDownVel * downRayVelMod * Time.deltaTime;
 			float gravityRay = Mathf.Clamp(playerDownVel, rayLength*Time.deltaTime, float.MaxValue);
 
-			return gravityRay;// Mathf.Max(gravityRay, backRay);
+			return Mathf.Max(gravityRay, backRay);
 		}
 
 		return rayLength*Time.deltaTime;

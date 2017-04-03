@@ -60,7 +60,7 @@ public class HumanController : MonoBehaviour
 
 	void Update()
 	{
-		if (Time.deltaTime > 0.1f) return;
+		if (Time.deltaTime > 0.1f) return;	// skip slow frames: prevents us from skipping collision
 
 		float speed = 0;
 		Vector3 moveDir = GetMoveDirection(ref speed);

@@ -5,14 +5,8 @@ using UnityEngine;
 public class RayPoint : MonoBehaviour
 {
 	[SerializeField] Direction direction;
-	public enum Direction { Down, Forward, Back, Left, Right };
+	public enum Direction { Down, Forward, Back, Left, Right, Up };
 	public Direction GetRealDirection { get { return direction; } }
-
-	[SerializeField] bool longRay = false;
-	public bool IsLongRay { get { return longRay; } }
-
-	[SerializeField] float length = 1;
-	public float GetLength { get { return length; } }
 
 	public Vector3 GetDirection
 	{
@@ -34,6 +28,9 @@ public class RayPoint : MonoBehaviour
 
 				case Direction.Right:
 				return Vector3.right;
+
+				case Direction.Up:
+				return Vector3.up;
 
 				default:
 				return Vector3.zero;

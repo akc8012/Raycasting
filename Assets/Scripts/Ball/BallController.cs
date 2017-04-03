@@ -59,25 +59,18 @@ public class BallController : MonoBehaviour
 	// called before any physics calculations (put physics here)
 	void FixedUpdate()
 	{
-		float horizMovement = 0;
-		float vertMovement = 0;
+		Vector3 input = Vector3.zero;
 
 		if (controlsToggle)
 		{
-			horizMovement = Input.GetAxisRaw ("Horizontal");
-			vertMovement = Input.GetAxisRaw ("Vertical");
+			input.x = Input.GetAxisRaw ("Horizontal");
+			input.z = Input.GetAxisRaw ("Vertical");
 			jump = false;	//Input.GetButtonDown ("Jump");
 		}
 
 		Grounded ();
 
-		// camera forward should be facing straight, the forward points in direction of facing
-
-		Vector3 camForward = cam.forward;
-		camForward.y = 0;
-		Vector3 movement = camForward * vertMovement;
-		movement += Camera.main.transform.right * horizMovement;
-		movement *= speed;
+		Vector3 movement = GetMovement(input) * speed;
 
 		if (jumping)
 			movement *= 0.6f;
@@ -103,6 +96,18 @@ public class BallController : MonoBehaviour
 		}
 
 		MovementLimits(movement);
+	}
+
+	Vector3 GetMovement(Vector3 input)
+	{
+		Vector3 cameraDir = cam.forward; cameraDir.y = 0.0f;
+		Vector3 moveDir = Quaternion.FromToRotation(Vector3.forward, cameraDir) * input;     // referential shift
+
+		// fixes bug when the camera forward is exactly -forward (opposite to Vector3.forward) by flipping the x around
+		if (Vector3.Dot(Vector3.forward, cameraDir.normalized) == -1)
+			moveDir = new Vector3(-moveDir.x, moveDir.y, moveDir.z);
+
+		return moveDir;
 	}
 
 	// This prevents the player from flying off of ledges and ramps
