@@ -5,6 +5,11 @@ using System.Collections;
 
 // Function:  Contains all movement and input information
 
+
+
+// grounded -- slightly weaken controls for air movement
+// disable controls -- when climbing up a slope that is tooooo high 
+
 public class BallController : MonoBehaviour
 {
 	BallCollider ballCollider;
@@ -15,6 +20,7 @@ public class BallController : MonoBehaviour
 
 	[SerializeField] int speed = 10;
 	[SerializeField] int maxVelocity = 20;
+	[SerializeField] float jumpHeight = 10;
 	[SerializeField] float extraGravity = 3;
 
 	[SerializeField][Range(0.90f,0.99f)]
@@ -47,6 +53,12 @@ public class BallController : MonoBehaviour
 
 		Grounded ();
 		Vector3 movement = GetMovement(input) * speed;
+
+		if (Input.GetButtonDown("Jump") && grounded)
+		{
+			print("jump");
+			rb.AddForce(Vector3.up * jumpHeight, ForceMode.VelocityChange);
+		}
 
 		if (rb.velocity.magnitude < maxVelocity)
 			rb.AddForce(movement);

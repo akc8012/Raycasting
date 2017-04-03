@@ -67,9 +67,6 @@ public class PlayerSwitcher : MonoBehaviour
 		switch (newState)
 		{
 			case PlayerState.Human:
-				ballMesh.SetActive(false);
-				humanMesh.SetActive(true);
-
 				ballController.enabled = false;
 
 				rb.isKinematic = true;
@@ -79,23 +76,28 @@ public class PlayerSwitcher : MonoBehaviour
 				transform.rotation = Quaternion.identity;
 				transform.position += Vector3.up * 0.3f;
 				humanController.enabled = true;
-			break;
+
+				ballMesh.SetActive(false);
+				humanMesh.SetActive(true);
+				break;
 
 			case PlayerState.Ball:
-				if (enableMeshSwitch)
-				{
-					humanMesh.SetActive(false);
-					ballMesh.SetActive(true);
-				} else humanMesh.SetActive(true);
-
 				humanController.enabled = false;
 
 				rb.isKinematic = false;
 				rb.useGravity = true;
 				//rb.detectCollisions = true;
 
+				transform.position += Vector3.down * 0.2f;
 				ballController.enabled = true;
-			break;
+
+				if (enableMeshSwitch)
+				{
+					humanMesh.SetActive(false);
+					ballMesh.SetActive(true);
+				}
+				else humanMesh.SetActive(true);
+				break;
 		}
 	}
 }
