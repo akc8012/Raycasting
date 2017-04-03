@@ -10,10 +10,10 @@ public class BallController : MonoBehaviour
 	Rigidbody rb;
 	Transform cam;
 
-	[SerializeField]
-	int
-		speed = 10,
-		maxVelocity = 20;
+	Quaternion floorRot;
+
+	[SerializeField] int speed = 10;
+	[SerializeField] int maxVelocity = 20;
 
 	[SerializeField][Range(0.90f,0.99f)]
 	float playerSlowdownSpeed = 0.95f;
@@ -37,16 +37,19 @@ public class BallController : MonoBehaviour
 		grounded = check;
 	}
 
+	public void SendInfo(bool _grounded, Quaternion rotation)
+	{
+		grounded = _grounded;
+		floorRot = rotation;
+	}
+
 	// called before any physics calculations (put physics here)
 	void FixedUpdate()
 	{
 		Vector3 input = Vector3.zero;
 
 		if (grounded)
-		{
-			input.x = Input.GetAxisRaw ("Horizontal");
-			input.z = Input.GetAxisRaw ("Vertical");
-		}
+			input = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
 
 		Grounded ();
 		Vector3 movement = GetMovement(input) * speed;
@@ -59,12 +62,17 @@ public class BallController : MonoBehaviour
 
 	Vector3 GetMovement(Vector3 input)
 	{
+		input.Normalize();
 		Vector3 cameraDir = cam.forward; cameraDir.y = 0.0f;
 		Vector3 moveDir = Quaternion.FromToRotation(Vector3.forward, cameraDir) * input;     // referential shift
+		moveDir = floorRot * moveDir;
 
 		// fixes bug when the camera forward is exactly -forward (opposite to Vector3.forward) by flipping the x around
 		if (Vector3.Dot(Vector3.forward, cameraDir.normalized) == -1)
 			moveDir = new Vector3(-moveDir.x, moveDir.y, moveDir.z);
+
+
+		Debug.DrawLine(rb.position, rb.position + (moveDir * 3), Color.blue);
 
 		return moveDir;
 	}
