@@ -303,9 +303,9 @@ GameObject:
   - component: {fileID: 114557106883380580}
   - component: {fileID: 114389810423968292}
   - component: {fileID: 114767146899089418}
-  - component: {fileID: 54165279313806768}
   - component: {fileID: 114264917508350920}
   - component: {fileID: 135198442023987634}
+  - component: {fileID: 54165279313806768}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -2309,7 +2309,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1230884051307996}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.1, y: 2.09, z: -82.4}
+  m_LocalPosition: {x: -6.45, y: 29.53, z: -89.92}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4768151676531038}
@@ -2603,6 +2603,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39bb73a68ab6ed94bb7c5b075512569e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxClimbAngle: 35
 --- !u!114 &114316678149169896
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2835,14 +2836,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 30
   maxVelocity: 15
-  jumpPower: 250
-  jumpPowerSecond: 550
+  extraGravity: 0.25
   playerSlowdownSpeed: 0.914
-  grounded: 0
-  controlsToggle: 1
-  jumping: 0
-  jump: 0
-  secondJump: 0
 --- !u!114 &114799994073499966
 MonoBehaviour:
   m_ObjectHideFlags: 1

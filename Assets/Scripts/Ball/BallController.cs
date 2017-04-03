@@ -7,6 +7,7 @@ using System.Collections;
 
 public class BallController : MonoBehaviour
 {
+	BallCollider ballCollider;
 	Rigidbody rb;
 	Transform cam;
 
@@ -14,6 +15,7 @@ public class BallController : MonoBehaviour
 
 	[SerializeField] int speed = 10;
 	[SerializeField] int maxVelocity = 20;
+	[SerializeField] float extraGravity = 3;
 
 	[SerializeField][Range(0.90f,0.99f)]
 	float playerSlowdownSpeed = 0.95f;
@@ -22,7 +24,8 @@ public class BallController : MonoBehaviour
 
 	void Start () 
 	{
-		rb = GetComponent<Rigidbody> ();
+		ballCollider = GetComponent<BallCollider>();
+		rb = GetComponent<Rigidbody>();
 		cam = Camera.main.transform;
 	}
 
@@ -32,20 +35,11 @@ public class BallController : MonoBehaviour
 	
 	}
 
-	public void IsGrounded(bool check)
-	{
-		grounded = check;
-	}
-
-	public void SendInfo(bool _grounded, Quaternion rotation)
-	{
-		grounded = _grounded;
-		floorRot = rotation;
-	}
-
 	// called before any physics calculations (put physics here)
 	void FixedUpdate()
 	{
+		ballCollider.CustomUpdate(out grounded, out floorRot);
+
 		Vector3 input = Vector3.zero;
 
 		if (grounded)
@@ -58,6 +52,7 @@ public class BallController : MonoBehaviour
 			rb.AddForce(movement);
 
 		MovementLimits(movement);
+		rb.AddForce(Vector3.down * extraGravity, ForceMode.VelocityChange); // add extra gravity
 	}
 
 	Vector3 GetMovement(Vector3 input)

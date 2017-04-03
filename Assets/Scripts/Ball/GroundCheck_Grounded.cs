@@ -8,11 +8,11 @@ using System.Collections;
 
 public class GroundCheck_Grounded : MonoBehaviour
 {
-	BallController ballController;
+	//BallController ballController;
 
 	void Start () 
 	{
-		ballController = GetComponent<BallController>();
+		//ballController = GetComponent<BallController>();
 	}
 
 	void OnCollisionEnter(Collision col){
@@ -24,7 +24,7 @@ public class GroundCheck_Grounded : MonoBehaviour
 	void OnCollisionStay(Collision col)
 	{
 		//if (col.gameObject.tag == "Ground" || col.gameObject.tag == "Ramp") {
-			ballController.IsGrounded (true);
+			//ballController.IsGrounded (true);
 		//}
 
 		//if(col.gameObject.tag == "Ramp"){
@@ -39,7 +39,7 @@ public class GroundCheck_Grounded : MonoBehaviour
 		//ballController.ToggleControls (true);
 
 		//if (col.gameObject.tag == "Ground" || col.gameObject.tag == "Ramp") {
-			ballController.IsGrounded (false);
+			//ballController.IsGrounded (false);
 		//}
 	}
 }

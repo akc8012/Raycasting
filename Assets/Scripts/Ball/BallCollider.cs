@@ -4,29 +4,32 @@ using UnityEngine;
 
 public class BallCollider : MonoBehaviour
 {
-	BallController ballController;
+	[SerializeField] float maxClimbAngle = 35;
 
 	void Start()
 	{
-		ballController = GetComponent<BallController>();
+		
 	}
 
-	void Update()
+	public void CustomUpdate(out bool isGrounded, out Quaternion floorRot)
 	{
-		bool isGrounded = false;
 		RaycastHit hitMan;
 		Ray rayMan = new Ray(transform.position, Vector3.down);
 
-		Vector3 thing = Vector3.zero;
+		Vector3 rot = Vector3.zero;
 
 		if (Physics.Raycast(rayMan, out hitMan, 1.2f))
 		{
 			isGrounded = true;
-			thing = Vector3.Cross(hitMan.normal, Vector3.down);
-			thing.x *= Mathf.Rad2Deg;
-			thing.z *= Mathf.Rad2Deg;
-		}
+			rot = Vector3.Cross(hitMan.normal, Vector3.down);
+			rot.x *= Mathf.Rad2Deg;
+			rot.z *= Mathf.Rad2Deg;
 
-		ballController.SendInfo(isGrounded, Quaternion.Euler(thing));
+			if (Mathf.Abs(rot.x) >= maxClimbAngle || Mathf.Abs(rot.z) >= maxClimbAngle)
+				isGrounded = false;
+			
+		} else isGrounded = false;
+
+		floorRot = Quaternion.Euler(rot);
 	}
 }
