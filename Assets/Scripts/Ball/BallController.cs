@@ -11,23 +11,14 @@ public class BallController : MonoBehaviour
 	Transform cam;
 
 	[SerializeField]
-	int 
+	int
 		speed = 10,
-		maxVelocity = 20,
-		jumpPower = 5,
-		jumpPowerSecond = 5;
+		maxVelocity = 20;
 
 	[SerializeField][Range(0.90f,0.99f)]
-	float
-		playerSlowdownSpeed = 0.95f;
+	float playerSlowdownSpeed = 0.95f;
 
-	[SerializeField]
-	bool 
-		grounded = false,
-		controlsToggle = true,
-		jumping = false,
-		jump = false,
-		secondJump = false;
+	bool grounded = false;
 
 	void Start () 
 	{
@@ -41,19 +32,9 @@ public class BallController : MonoBehaviour
 	
 	}
 
-	public void ToggleControls(bool check)
-	{
-		controlsToggle = check;
-	}
-
 	public void IsGrounded(bool check)
 	{
 		grounded = check;
-	}
-
-	public void IsJumping(bool check)
-	{
-		jumping = check;
 	}
 
 	// called before any physics calculations (put physics here)
@@ -61,39 +42,17 @@ public class BallController : MonoBehaviour
 	{
 		Vector3 input = Vector3.zero;
 
-		if (controlsToggle)
+		if (grounded)
 		{
 			input.x = Input.GetAxisRaw ("Horizontal");
 			input.z = Input.GetAxisRaw ("Vertical");
-			jump = false;	//Input.GetButtonDown ("Jump");
 		}
 
 		Grounded ();
-
 		Vector3 movement = GetMovement(input) * speed;
-
-		if (jumping)
-			movement *= 0.6f;
 
 		if (rb.velocity.magnitude < maxVelocity)
 			rb.AddForce(movement);
-
-		if (secondJump && jumping && jump)
-		{
-			Vector3 temp = rb.velocity;
-			temp.y = 0;
-			rb.velocity = temp;
-			rb.AddForce (0, jumpPowerSecond, 0);
-			secondJump = false;
-		}
-
-		if (grounded && jump)
-		{
-			rb.AddForce (0, jumpPower, 0);
-			jumping = true;
-			secondJump = true;
-			rb.mass = 2;
-		}
 
 		MovementLimits(movement);
 	}
@@ -114,9 +73,9 @@ public class BallController : MonoBehaviour
 	// Also limits air control to the degree specified
 	void Grounded()
 	{
-		if (!grounded && !jumping)
+		if (!grounded)
 			rb.mass = 100;
-		else if(!jumping)
+		else
 			rb.mass = 1;
 	}
 
@@ -128,10 +87,10 @@ public class BallController : MonoBehaviour
 		{
 			rb.mass = 100;
 
-			if(grounded && controlsToggle)
+			if (grounded)
 				rb.velocity *= playerSlowdownSpeed;
 		}
-		else if (!jumping)
+		else
 		{
 			rb.mass = 1;
 		}

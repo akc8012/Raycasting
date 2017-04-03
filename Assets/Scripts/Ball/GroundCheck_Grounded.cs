@@ -17,7 +17,7 @@ public class GroundCheck_Grounded : MonoBehaviour
 
 	void OnCollisionEnter(Collision col){
 		//if (col.gameObject.tag == "Ground" || col.gameObject.tag == "Ramp") {
-			ballController.IsJumping (false);
+		//	ballController.IsJumping (false);
 		//}
 	}
 
@@ -36,7 +36,7 @@ public class GroundCheck_Grounded : MonoBehaviour
 
 	void OnCollisionExit(Collision col)
 	{
-		ballController.ToggleControls (true);
+		//ballController.ToggleControls (true);
 
 		//if (col.gameObject.tag == "Ground" || col.gameObject.tag == "Ramp") {
 			ballController.IsGrounded (false);
