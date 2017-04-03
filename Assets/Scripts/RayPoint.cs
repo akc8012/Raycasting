@@ -5,7 +5,9 @@ using UnityEngine;
 public class RayPoint : MonoBehaviour
 {
 	[SerializeField] Direction direction;
-	enum Direction { Down, Forward, Back, Left, Right };
+	public enum Direction { Down, Forward, Back, Left, Right };
+	public Direction GetRealDirection { get { return direction; } }
+
 	[SerializeField] bool longRay = false;
 	public bool IsLongRay { get { return longRay; } }
 

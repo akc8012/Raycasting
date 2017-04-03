@@ -14,6 +14,7 @@ public class HumanCollider : MonoBehaviour
 	const float skinLength = 12.5f;
 	const float rayLength = 12.5f;
 	const float downRayVelMod = 1.25f;
+	const float backRayMod = 18.75f;
 	const float dotAllowance = -0.5f;	// lower is less lenient
 
 	public void Init(HumanController.OnFloor onFloor)
@@ -101,16 +102,16 @@ public class HumanCollider : MonoBehaviour
 
 	float GetRayLength(int rayNdx, float playerDownVel, Vector3 rayDir, Vector3 playerBack)
 	{
-		if (rayDir == Vector3.down)
+		if (rayPoints[rayNdx].GetRealDirection == RayPoint.Direction.Down)
 		{
 			float backRay = 0;
 			if (IsBackRay(rayNdx, playerBack))
-				backRay = 0.3f;		// some constant or wacky value
+				backRay = backRayMod * Time.deltaTime;
 
 			playerDownVel = -playerDownVel * downRayVelMod * Time.deltaTime;
 			float gravityRay = Mathf.Clamp(playerDownVel, rayLength*Time.deltaTime, float.MaxValue);
 
-			return Mathf.Max(gravityRay, backRay);
+			return gravityRay;// Mathf.Max(gravityRay, backRay);
 		}
 
 		return rayLength*Time.deltaTime;
@@ -124,7 +125,7 @@ public class HumanCollider : MonoBehaviour
 
 		for (int i = 0; i < rayPoints.Length; i++)
 		{
-			if (rayPoints[i].GetDirection == Vector3.down)
+			if (rayPoints[i].GetRealDirection == RayPoint.Direction.Down)
 			{
 				float dist = Vector3.Distance(rayPoints[i].GetPosition, backPoint);
 				if (dist < minDist)
