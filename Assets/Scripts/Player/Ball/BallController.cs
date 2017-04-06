@@ -20,18 +20,14 @@ public class BallController : MonoBehaviour
 
 	[SerializeField] int speed = 10;
 	[SerializeField] int maxVelocity = 20;
+	[SerializeField] float jumpHeight = 10;
 	[SerializeField] float extraGravity = 3;
 
 	[SerializeField][Range(0.90f,0.99f)]
 	float playerSlowdownSpeed = 0.95f;
 
 	bool grounded = false;
-	bool pressingJump = false;
-
-	const float totalJumpFrames = 3;
-	float jumpFrames = totalJumpFrames;
-	float jumpDecrease = 0.5f;
-	bool canHoldJump = false;
+	bool pressedJump = false;
 
 	void Start () 
 	{
@@ -44,15 +40,7 @@ public class BallController : MonoBehaviour
 	void Update () 
 	{
 		if (Input.GetButtonDown("Jump") && grounded)
-			canHoldJump = true;
-
-		if (jumpFrames <= 0)
-			canHoldJump = false;
-
-		pressingJump = (Input.GetButton("Jump") && canHoldJump);
-
-		if (!Input.GetButton("Jump") && grounded)
-			jumpFrames = totalJumpFrames;
+			pressedJump = true;
 	}
 
 	// called before any physics calculations (put physics here)
@@ -68,10 +56,10 @@ public class BallController : MonoBehaviour
 		Grounded ();
 		Vector3 movement = GetMovement(input) * speed;
 
-		if (pressingJump && jumpFrames > 0)
+		if (pressedJump)
 		{
-			rb.AddForce(Vector3.up * jumpFrames, ForceMode.VelocityChange);
-			jumpFrames -= jumpDecrease;
+			rb.AddForce(Vector3.up * jumpHeight, ForceMode.VelocityChange);
+			pressedJump = false;
 		}
 
 		if (rb.velocity.magnitude < maxVelocity)
